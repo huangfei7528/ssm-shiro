@@ -26,7 +26,6 @@
     	</script>
         <div class="page-container">
             <h1>Login</h1>
-            <h1>本项目请使用Tomcat，请勿使用Jetty</h1>
             <form id="_form" action="" method="post">
                 <input type="text" name="account" class="username" placeholder="Account">
                 <input type="password" name="password" class="password" placeholder="Password">
@@ -36,13 +35,6 @@
                 </div>
                 <button type="button" id="login">登录</button>
                 <button type="button" id="register" class="register">Register</button>
-                <div class="connect" >
-	                <p>有问题请这样解决:</p>
-	                <p>
-	                    <a class="" style="width: auto; color: rgb(255, 255, 255);" target="_blank" href="http://www.sojson.com/shiro">点我看本项目介绍，<br><br>（登录密码请看这里。）</a>
-	                    <a class="" style="width: auto; color: rgb(255, 255, 255);" target="_blank" href="http://jq.qq.com/?_wv=1027&k=YpqCNd">各种不会 QQ群：259217951</a>
-	                </p>
-	            </div>
                 
                 <div class="error"><span>+</span></div>
             </form>

@@ -32,7 +32,7 @@ public class SubmitDto {
 	 * @param request
 	 */
 	public SubmitDto(Map<String, String> outMap, HttpServletRequest request) {
-		Map<String,String> requestMap = request.getParameterMap();
+		Map<String, String[]> requestMap = request.getParameterMap();
 		
 		for (String key : requestMap.keySet()) {
 			if(outMap.containsValue(key)){
