@@ -39,21 +39,11 @@
 	    <constructor-arg index="2" value="6379"  name="port" type="int"/>
 	    <constructor-arg index="3" value="5000"  name="timeout" type="int"/>
 	    <constructor-arg index="1" value="172.18.1.209" name="host" type="java.lang.String"/>
-	    <!--  如果你需要配置密码，请打开这里。 -->
-	   <!--  <constructor-arg index="4" value="你的密码" name="password" type="java.lang.String"/> -->
-	   
+	   <!--   如果你需要配置密码，请打开这里。 -->
+	   <!--    <constructor-arg index="4" value="你的密码" name="password" type="java.lang.String"/> -->
 	</bean>
 	
 	 <!-- redis分布式锁需要连接类 -->
-	<!-- <bean id="stringRedisTemplate" class="org.springframework.data.redis.core.StringRedisTemplate"  scope="prototype">  
-		<property name="connectionFactory"   ref="jedisConnectionFactory" /> 
-		<property name="keySerializer">  
-        	<bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />  
-        </property>
-        <property name="hashKeySerializer">  
-	        <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />  
-	    </property> 
-	</bean>
 	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"  scope="prototype">  
         <property name="connectionFactory"   ref="jedisConnectionFactory" />  
         <property name="keySerializer">  
@@ -62,7 +52,7 @@
         <property name="hashKeySerializer">  
 	        <bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />  
 	    </property>
-    </bean>  -->   
+    </bean>    
 	
 	<!-- 
 		这种 arguments 构造的方式，之前配置有缺点。

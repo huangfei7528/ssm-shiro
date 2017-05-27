@@ -2,7 +2,7 @@
 <html lang="zh-cn">
     <head>
         <meta charset="utf-8">
-        <title>Shiro Demo | 登录</title>
+        <title>Shiro  | 登录</title>
         <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
         <link   rel="icon" href="${basePath}/favicon.ico" type="image/x-icon" />
 		<link   rel="shortcut icon" href="${basePath}/favicon.ico" />
@@ -27,10 +27,10 @@
         <div class="page-container">
             <h1>Loging</h1>
             <form id="_form" action="" method="post">
-                <input type="text" name="account" class="username" placeholder="Account">
-                <input type="password" name="password" class="password" placeholder="Password">
+                <input type="text" name="account" class="username" placeholder="输入帐号">
+                <input type="password" name="password" class="password" placeholder="输入密码">
                 <div style="text-align: left; margin-left: 10px;">
-                <label><input type="checkbox" checked="checked"  id="rememberMe"style="width: 10px; height: 10px;">记住我</label>
+                <label><input type="checkbox" checked="checked"  id="rememberMe" style="width: 10px; height: 10px;">记住我</label>
               <!--   <p><b style='color:red;'>如果重启Tomcat，还是登录状态，是因为这里勾选了“记住我”。</b></p> -->
                 </div>
                 <button type="button" id="login">登录</button>
@@ -96,7 +96,7 @@
 			        	type:"post",
 			        	dataType:"json",
 			        	beforeSend:function(){
-			        		layer.msg('开始登录，请注意后台控制台。');
+			        		layer.msg('登录中，请稍等。。。。');
 			        	},
 			        	success:function(result){
 				        	layer.close(load);
@@ -105,7 +105,7 @@
 				    			$('.password').val('');
 				    			return;
 				    		}else{
-				    			layer.msg('登录成功！');
+				    			/* layer.msg('登录成功！'); */
 				    			setTimeout(function(){
 				    				//登录返回
 					    			window.location.href= result.back_url || "${basePath}/";

@@ -31,7 +31,7 @@ public class JedisShiroSessionRepository implements ShiroSessionRepository {
             throw new NullPointerException("session is empty");
         try {
             byte[] key = SerializeUtil.serialize(buildRedisSessionKey(session.getId()));
-            
+            System.out.println(session.getId());
             
             //不存在才添加。
             if(null == session.getAttribute(CustomSessionManager.SESSION_STATUS)){
@@ -39,8 +39,8 @@ public class JedisShiroSessionRepository implements ShiroSessionRepository {
             	SessionStatus sessionStatus = new SessionStatus();
             	session.setAttribute(CustomSessionManager.SESSION_STATUS, sessionStatus);
             }
-            
             byte[] value = SerializeUtil.serialize(session);
+            //设置session过期时间与缓存过期时间同步
             long sessionTimeOut = session.getTimeout() / 1000;
             Long expireTime = sessionTimeOut + SESSION_VAL_TIME_SPAN + (5 * 60);
             getJedisManager().saveValueByKey(DB_INDEX, key, value, expireTime.intValue());

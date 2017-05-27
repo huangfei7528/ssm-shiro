@@ -10,7 +10,7 @@
         <meta name="author" content="">
 
         <!-- CSS -->
-        <#--link rel='stylesheet' href='http://fonts.googleapis.com/css?family=PT+Sans:400,700'-->
+        <!--link rel='stylesheet' href='http://fonts.googleapis.com/css?family=PT+Sans:400,700'-->
 		<link rel="stylesheet" href="${basePath}/css/login/reset.css"/>
         <link rel="stylesheet" href="${basePath}/css/login/supersized.css"/>
         <link rel="stylesheet" href="${basePath}/css/login/style.css"/>
