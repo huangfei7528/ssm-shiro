@@ -83,7 +83,6 @@ public class SampleRealm extends AuthorizingRealm {
      */  
     @Override  
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {  
-    	
     	Long userId = TokenManager.getUserId();
 		SimpleAuthorizationInfo info =  new SimpleAuthorizationInfo();
 		//根据用户ID查询角色（role），放入到Authorization里。

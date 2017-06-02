@@ -30,7 +30,7 @@ public class JedisShiroCacheManager implements ShiroCacheManager {
     private JedisManager jedisManager;
 
     @Override
-    public <K, V> Cache<K, V> getCache(String name) {
+	public <K, V> Cache<K, V> getCache(String name) {
         return new JedisShiroCache<K, V>(name, getJedisManager());
     }
 

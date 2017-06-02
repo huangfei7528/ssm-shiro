@@ -12,6 +12,7 @@ import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import com.sojson.common.utils.LoggerUtils;
 import com.sojson.common.utils.SerializeUtil;
+import com.sojson.common.utils.SpringRedisUtils;
 import com.sojson.common.utils.StringUtils;
 
 /**
@@ -81,9 +82,10 @@ public class JedisManager {
         byte[] result = null;
         boolean isBroken = false;
         try {
-            jedis = getJedis();
+            /*jedis = getJedis();
             jedis.select(dbIndex);
-            result = jedis.get(key);
+            result = jedis.get(key);*/
+            Object obj = SpringRedisUtils.get(new String(key));
         } catch (Exception e) {
             isBroken = true;
             throw e;
@@ -97,10 +99,11 @@ public class JedisManager {
         Jedis jedis = null;
         boolean isBroken = false;
         try {
-            jedis = getJedis();
+        	SpringRedisUtils.delete(new String(key));
+            /*jedis = getJedis();
             jedis.select(dbIndex);
             Long result = jedis.del(key);
-            LoggerUtils.fmtDebug(getClass(), "删除Session结果：%s" , result);
+            LoggerUtils.fmtDebug(getClass(), "删除Session结果：%s" , result);*/
         } catch (Exception e) {
             isBroken = true;
             throw e;
@@ -114,11 +117,13 @@ public class JedisManager {
         Jedis jedis = null;
         boolean isBroken = false;
         try {
-            jedis = getJedis();
+           /* jedis = getJedis();
             jedis.select(dbIndex);
-            jedis.set(key, value);
+            jedis.set(key, value);*/
+            SpringRedisUtils.set(new String(key), new String(value));
             if (expireTime > 0)
-                jedis.expire(key, expireTime);
+               /* jedis.expire(key, expireTime);*/
+            	SpringRedisUtils.expire(new String(key), Long.valueOf(expireTime));
         } catch (Exception e) {
             isBroken = true;
             throw e;
@@ -144,28 +149,28 @@ public class JedisManager {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<Session> AllSession(int dbIndex, String redisShiroSession) throws Exception {
-		Jedis jedis = null;
+		/*Jedis jedis = null;*/
         boolean isBroken = false;
         Set<Session> sessions = new HashSet<Session>();
+        Object obj2 = SpringRedisUtils.get(JedisShiroSessionRepository.REDIS_SHIRO_ALL);
 		try {
-            jedis = getJedis();
-            jedis.select(dbIndex);
-            
-            Set<byte[]> byteKeys = jedis.keys((JedisShiroSessionRepository.REDIS_SHIRO_ALL).getBytes());  
-            if (byteKeys != null && byteKeys.size() > 0) {  
-                for (byte[] bs : byteKeys) {  
-                	Session obj = SerializeUtil.deserialize(jedis.get(bs),  
-                    		 Session.class);  
-                     if(obj instanceof Session){
-                    	 sessions.add(obj);  
-                     }
-                }  
-            }  
+           /* jedis = getJedis();
+            jedis.select(dbIndex);*/
+//            Set<byte[]> byteKeys = jedis.keys((JedisShiroSessionRepository.REDIS_SHIRO_ALL).getBytes());  
+//            if (byteKeys != null && byteKeys.size() > 0) {  
+//                for (byte[] bs : byteKeys) {  
+//                	Session obj = SerializeUtil.deserialize(jedis.get(bs),  
+//                    		 Session.class);  
+//                     if(obj instanceof Session){
+//                    	 sessions.add(obj);  
+//                     }
+//                }  
+//            }  
         } catch (Exception e) {
             isBroken = true;
             throw e;
         } finally {
-            returnResource(jedis, isBroken);
+//            returnResource(jedis, isBroken);
         }
         return sessions;
 	}
