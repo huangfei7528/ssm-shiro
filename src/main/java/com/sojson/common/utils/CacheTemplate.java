@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 public class CacheTemplate {
 
 	@Value("${redis.prefix}")
-	private String cachePrefix;
+	private static String cachePrefix;
 	
 	
 	public CacheTemplate() {
@@ -28,6 +28,5 @@ public class CacheTemplate {
 	private String getGlobalPrjName(){
 		return cachePrefix.split("_")[0];
 	}
-
 	
 }

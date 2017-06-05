@@ -90,7 +90,7 @@ public class JedisShiroSessionRepository implements ShiroSessionRepository {
     	Collection<Session> sessions = null;
 		try {
 //			sessions = getJedisManager().AllSession(DB_INDEX,REDIS_SHIRO_SESSION);
-		    Object obj2 = SpringRedisUtils.get("shiro-session-cache:*");
+		    Object obj2 = SpringRedisUtils.getHashKey(REDIS_SHIRO_SESSION);
 //			sessions = SpringRedisUtils.getObject(REDIS_SHIRO_SESSION, Collection.class);
 		} catch (Exception e) {
 			LoggerUtils.fmtError(getClass(), e, "获取全部session异常");
