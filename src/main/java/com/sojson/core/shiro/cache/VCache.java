@@ -1,4 +1,4 @@
-package com.sojson.core.shiro.cache;
+/*package com.sojson.core.shiro.cache;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import redis.clients.jedis.Jedis;
 
 import com.sojson.common.utils.SerializeUtil;
 import com.sojson.common.utils.SpringContextUtil;
-/**
+*//**
  * 
  * 开发公司：SOJSON在线工具 <p>
  * 版权所有：© www.sojson.com<p>
@@ -27,20 +27,20 @@ import com.sojson.common.utils.SpringContextUtil;
  * @email  so@sojson.com
  * @version 1.0,2016年6月2日 <br/>
  * 
- */
+ *//*
 @SuppressWarnings("unchecked")
 public class VCache {
 
 	final static JedisManager J = SpringContextUtil.getBean("jedisManager", JedisManager.class);
 	private VCache() {}
 	
-	/**
+	*//**
 	 * 简单的Get
 	 * @param <T>
 	 * @param key
 	 * @param requiredType
 	 * @return
-	 */
+	 *//*
 	public static <T> T get(String key , Class<T>...requiredType){
 		Jedis jds = null;
         boolean isBroken = false;
@@ -57,11 +57,11 @@ public class VCache {
         }
 		return null;
 	}
-	/**
+	*//**
 	 * 简单的set
 	 * @param key
 	 * @param value
-	 */
+	 *//*
 	public static void set(Object key ,Object value){
 		Jedis jds = null;
         boolean isBroken = false;
@@ -78,12 +78,12 @@ public class VCache {
             returnResource(jds, isBroken);
         }
 	}
-	/**
+	*//**
 	 * 过期时间的
 	 * @param key
 	 * @param value
 	 * @param timer （秒）
-	 */
+	 *//*
 	public static void setex(Object key, Object value, int timer) {
 		Jedis jds = null;
         boolean isBroken = false;
@@ -101,14 +101,14 @@ public class VCache {
         }
 		
 	}
-	/**
+	*//**
 	 * 
 	 * @param <T>
 	 * @param mapkey map
 	 * @param key	 map里的key
 	 * @param requiredType value的泛型类型
 	 * @return
-	 */
+	 *//*
 	public static <T> T getVByMap(String mapkey,String key , Class<T> requiredType){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -132,12 +132,12 @@ public class VCache {
 		}
 		return null;
 	}
-	/**
+	*//**
 	 * 
 	 * @param mapkey map
 	 * @param key	 map里的key
 	 * @param value   map里的value
-	 */
+	 *//*
 	public static void setVByMap(String mapkey,String key ,Object value){
 		Jedis jds = null;
         boolean isBroken = false;
@@ -156,12 +156,12 @@ public class VCache {
         }
 		
 	}
-	/**
+	*//**
 	 * 删除Map里的值
 	 * @param mapKey
 	 * @param dkey
 	 * @return
-	 */
+	 *//*
 	public static Object delByMapKey(String mapKey ,String...dkey){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -184,7 +184,7 @@ public class VCache {
 		return new Long(0);
 	}
 	
-	/**
+	*//**
 	 * 往redis里取set整个集合
 	 * 
 	 * @param <T>
@@ -193,7 +193,7 @@ public class VCache {
 	 * @param end
 	 * @param requiredType
 	 * @return
-	 */
+	 *//*
 	public static <T> Set<T> getVByList(String setKey,Class<T> requiredType){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -216,11 +216,11 @@ public class VCache {
 		}
 		return null;
 	}
-	/**
+	*//**
 	 * 获取Set长度
 	 * @param setKey
 	 * @return
-	 */
+	 *//*
 	public static Long getLenBySet(String setKey){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -237,11 +237,11 @@ public class VCache {
 		}
 		return null;
 	}
-	/**
+	*//**
 	 * 删除Set
 	 * @param dkey
 	 * @return
-	 */
+	 *//*
 	public static Long delSetByKey(String key,String...dkey){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -263,11 +263,11 @@ public class VCache {
 		}
 		return new Long(0);
 	}
-	/**
+	*//**
 	 * 随机 Set 中的一个值
 	 * @param key
 	 * @return
-	 */
+	 *//*
 	public static String srandmember(String key){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -284,11 +284,11 @@ public class VCache {
 		}
 		return null;
 	}
-	/**
+	*//**
 	 * 往redis里存Set
 	 * @param setKey
 	 * @param value
-	 */
+	 *//*
 	public static void setVBySet(String setKey,String value){
 		Jedis jds = null;
         boolean isBroken = false;
@@ -303,11 +303,11 @@ public class VCache {
             returnResource(jds, isBroken);
         }
 	}
-	/**
+	*//**
 	 * 取set 
 	 * @param key
 	 * @return
-	 */
+	 *//*
 	public static Set<String> getSetByKey(String key){
 		Jedis jds = null;
         boolean isBroken = false;
@@ -327,11 +327,11 @@ public class VCache {
 	}
 	
 	
-	/**
+	*//**
 	 * 往redis里存List
 	 * @param listKey
 	 * @param value
-	 */
+	 *//*
 	public static void setVByList(String listKey,Object value){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -348,7 +348,7 @@ public class VCache {
 			returnResource(jds, isBroken);
 		}
 	}
-	/**
+	*//**
 	 * 往redis里取list
 	 * 
 	 * @param <T>
@@ -357,7 +357,7 @@ public class VCache {
 	 * @param end
 	 * @param requiredType
 	 * @return
-	 */
+	 *//*
 	public static <T> List<T> getVByList(String listKey,int start,int end,Class<T> requiredType){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -380,11 +380,11 @@ public class VCache {
 		}
 		return null;
 	}
-	/**
+	*//**
 	 * 获取list长度
 	 * @param listKey
 	 * @return
-	 */
+	 *//*
 	public static Long getLenByList(String listKey){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -402,11 +402,11 @@ public class VCache {
 		}
 		return null;
 	}
-	/**
+	*//**
 	 * 删除
 	 * @param dkey
 	 * @return
-	 */
+	 *//*
 	public static Long delByKey(String...dkey){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -427,11 +427,11 @@ public class VCache {
 		}
 		return new Long(0);
 	}
-	/**
+	*//**
 	 * 判断是否存在
 	 * @param existskey
 	 * @return
-	 */
+	 *//*
 	public static boolean exists(String existskey){
 		Jedis jds = null;
 		boolean isBroken = false;
@@ -448,11 +448,11 @@ public class VCache {
 		}
 		return false;
 	}
-	/**
+	*//**
 	 * 释放
 	 * @param jedis
 	 * @param isBroken
-	 */
+	 *//*
 	public static void returnResource(Jedis jedis, boolean isBroken) {
         if (jedis == null)
             return;
@@ -464,3 +464,4 @@ public class VCache {
         jedis.close();
 	 }
 }
+*/

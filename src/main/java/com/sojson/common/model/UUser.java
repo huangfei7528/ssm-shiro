@@ -110,6 +110,7 @@ public class UUser implements Serializable{
         this.lastLoginTime = lastLoginTime;
     }
     public String toString(){
-    	return JSONObject.fromObject(this).toString();
+//    	return JSONObject.fromObject(this).toString();
+    	return this.email;
     }
 }

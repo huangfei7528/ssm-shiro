@@ -2,10 +2,10 @@ package com.sojson.common.utils;
 
 import org.springframework.beans.factory.annotation.Value;
 
-public class CacheTemplate<T> {
+public class CacheTemplate {
 
 	@Value("${redis.prefix}")
-	private String cachePrefix;
+	private static String cachePrefix;
 	
 	
 	public CacheTemplate() {
@@ -28,6 +28,5 @@ public class CacheTemplate<T> {
 	private String getGlobalPrjName(){
 		return cachePrefix.split("_")[0];
 	}
-
 	
 }
