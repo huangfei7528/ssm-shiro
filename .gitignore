@@ -1,6 +1,6 @@
-.project
 .classpath
 .mymetadata
 .myumldata
 .settings/
 target/
+.project
