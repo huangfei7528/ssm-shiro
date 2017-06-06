@@ -3,6 +3,7 @@ package com.sojson.user.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;

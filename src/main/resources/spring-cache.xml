@@ -55,10 +55,10 @@
     
 	<bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate"  scope="prototype">  
         <property name="connectionFactory"   ref="jedisConnectionFactory" />  
-        <property name="defaultSerializer" ref="stringRedisSerializer"/>
+     <!--    <property name="defaultSerializer" ref="stringRedisSerializer"/> -->
         <property name="keySerializer" ref="stringRedisSerializer"/>
         <property name="valueSerializer" ref="valueSerializer"/>
-        
+        <property name="hashKeySerializer"  ref="stringRedisSerializer"/>  
         <!-- <property name="keySerializer">  
         	<bean class="org.springframework.data.redis.serializer.StringRedisSerializer" />  
         </property>
