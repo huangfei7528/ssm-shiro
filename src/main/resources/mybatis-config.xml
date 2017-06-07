@@ -11,6 +11,13 @@
   	
   </typeAliases>
   
+  <mappers>
+    <mapper resource="mapper/UPermissionMapper.xml"/>
+    <mapper resource="mapper/URoleMapper.xml"/>
+    <mapper resource="mapper/URolePermissionMapper.xml"/>
+    <mapper resource="mapper/UUserMapper.xml"/>
+    <mapper resource="mapper/UUserRoleMapper.xml"/>
+ </mappers>
  <!-- 
  <mappers>
     <mapper resource="mapper/StudentMapper.xml"/>

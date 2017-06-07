@@ -54,11 +54,6 @@
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<property name="configLocation" value="classpath:mybatis-config.xml"/>
-		<property name="mapperLocations"  >
-			<list>
-				<value>classpath:com/sojson/common/mapper/*.xml</value>
-			</list>
-		</property>
 	</bean>
 
 	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
@@ -76,20 +71,16 @@
 	 </bean>
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="publish*" />
-			<tx:method name="save*" />
-			<tx:method name="add*" />
-			<tx:method name="update*" />
-			<tx:method name="insert*" />
-			<tx:method name="create*" />
-			<tx:method name="del*" />
-			<tx:method name="load*" />
-			<tx:method name="init*" />
-
-
-
-
-			<tx:method name="*"  read-only="true"/>
+		<!-- 	<tx:method name="publish*" /> -->
+			<tx:method name="load*" read-only="true" propagation="SUPPORTS" no-rollback-for="java.lang.Throwable"/>
+			<tx:method name="save*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="add*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="update*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="insert*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="create*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="del*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<tx:method name="init*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
+			<!-- <tx:method name="*"  read-only="true"/> -->
 		</tx:attributes>
 	</tx:advice>
  	<!-- AOP配置--> 
