@@ -1,7 +1,8 @@
-/target/
+.classpath
+.mymetadata
+.myumldata
+.settings/
+.settings
+target/
 target
 .project
-/.settings/
-.classpath
-.metadata
-.classpath
