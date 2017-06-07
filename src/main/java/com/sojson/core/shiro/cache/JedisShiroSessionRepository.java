@@ -20,15 +20,12 @@ import com.sojson.core.shiro.session.ShiroSessionRepository;
  */
 public class JedisShiroSessionRepository implements ShiroSessionRepository {
     public static final String REDIS_SHIRO_SESSION = "shiro-session-cache";
-    //这里有个小BUG，因为Redis使用序列化后，Key反序列化回来发现前面有一段乱码，解决的办法是存储缓存不序列化
-    public static final String REDIS_SHIRO_ALL = "*shiro-session-cache:*";
     private static final int SESSION_VAL_TIME_SPAN = 18000;
     @Override
     public void saveSession(Session session) {
         if (session == null || session.getId() == null)
             throw new NullPointerException("session is empty");
         try {
-        	String key = buildRedisSessionKey(session.getId());
             //不存在才添加。
             if(null == session.getAttribute(CustomSessionManager.SESSION_STATUS)){
             	//Session 踢出自存存储。

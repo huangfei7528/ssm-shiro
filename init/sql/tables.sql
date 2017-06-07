@@ -58,4 +58,31 @@ CREATE TABLE `u_user_role` (
   `rid` bigint(20) DEFAULT NULL COMMENT '角色ID'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- ----------------------------
+-- Table structure for u_role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `u_role_menu`;
+
+CREATE TABLE `u_role_menu` (
+  `r_id` bigint(20) DEFAULT NULL COMMENT '角色id',
+  `m_id` bigint(20) DEFAULT NULL COMMENT '菜单id'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for u_menus
+-- ----------------------------
+DROP TABLE IF EXISTS `u_menus`;
+CREATE TABLE `u_menus` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `pid` bigint(20) DEFAULT NULL COMMENT '父级菜单id',
+  `name` varchar(255) DEFAULT NULL COMMENT '菜单名称',
+  `url` varchar(255) DEFAULT NULL COMMENT '菜单url',
+  `logo_url` varchar(255) DEFAULT NULL COMMENT '菜单图标',
+  `remark` varchar(255) DEFAULT NULL COMMENT '备注信息',
+  `order_by` bigint(20) DEFAULT NULL COMMENT '排序',
+  `create_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '创建时间',
+  `modife_time` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 

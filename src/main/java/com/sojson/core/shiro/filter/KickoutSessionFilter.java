@@ -46,9 +46,9 @@ public class KickoutSessionFilter extends AccessControlFilter {
 	//静态注入
 	static String kickoutUrl;
 	//在线用户
-	final static String ONLINE_USER = KickoutSessionFilter.class.getCanonicalName()+ "_online_user";
+	final static String ONLINE_USER = "online_user";
 	//踢出状态，true标示踢出
-	final static String KICKOUT_STATUS = KickoutSessionFilter.class.getCanonicalName()+ "_kickout_status";
+	final static String KICKOUT_STATUS ="kickout_status";
 //	static VCache cache;
 	
 	//session获取
@@ -88,7 +88,6 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		
 		
 		//从缓存获取用户-Session信息 <UserId,SessionId>
-//		LinkedHashMap<Long, Serializable> infoMap = cache.get(ONLINE_USER, LinkedHashMap.class);
 		LinkedHashMap<Long, Serializable> infoMap = SpringRedisUtils.getObject(ONLINE_USER, LinkedHashMap.class);
 		//如果不存在，创建一个新的
 		infoMap = null == infoMap ? new LinkedHashMap<Long, Serializable>() : infoMap;
@@ -99,7 +98,6 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		//如果已经包含当前Session，并且是同一个用户，跳过。
 		if(infoMap.containsKey(userId) && infoMap.containsValue(sessionId)){
 			//更新存储到缓存1个小时（这个时间最好和session的有效期一致或者大于session的有效期）
-//			cache.setex(ONLINE_USER, infoMap, 3600);
 			SpringRedisUtils.set(ONLINE_USER, infoMap, 3600l);
 			return Boolean.TRUE;
 		}
@@ -121,7 +119,6 @@ public class KickoutSessionFilter extends AccessControlFilter {
 				shiroSessionRepository.deleteSession(oldSessionId);
 				infoMap.remove(userId);
 				//存储到缓存1个小时（这个时间最好和session的有效期一致或者大于session的有效期）
-//				cache.setex(ONLINE_USER, infoMap, 3600);
 				SpringRedisUtils.set(ONLINE_USER, infoMap, 3600l);
 			}
 			return  Boolean.TRUE;
@@ -130,7 +127,6 @@ public class KickoutSessionFilter extends AccessControlFilter {
 		if(!infoMap.containsKey(userId) && !infoMap.containsValue(sessionId)){
 			infoMap.put(userId, sessionId);
 			//存储到缓存1个小时（这个时间最好和session的有效期一致或者大于session的有效期）
-//			cache.setex(ONLINE_USER, infoMap, 3600);
 			SpringRedisUtils.set(ONLINE_USER, infoMap, 3600l);
 		}
 		return Boolean.TRUE;

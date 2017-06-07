@@ -1,4 +1,4 @@
-package com.sojson.core.shiro.cache;
+/*package com.sojson.core.shiro.cache;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -15,7 +15,7 @@ import com.sojson.common.utils.SerializeUtil;
 import com.sojson.common.utils.SpringRedisUtils;
 import com.sojson.common.utils.StringUtils;
 
-/**
+*//**
  * 
  * 开发公司：SOJSON在线工具 <p>
  * 版权所有：© www.sojson.com<p>
@@ -33,7 +33,7 @@ import com.sojson.common.utils.StringUtils;
  * @email  so@sojson.com
  * @version 1.0,2016年6月2日 <br/>
  * 
- */
+ *//*
 public class JedisManager {
 
     private JedisPool jedisPool;
@@ -62,75 +62,6 @@ public class JedisManager {
         return jedis;
     }
 
-    public void returnResource(Jedis jedis, boolean isBroken) {
-        if (jedis == null)
-            return;
-        /**
-         * @deprecated starting from Jedis 3.0 this method will not be exposed.
-         * Resource cleanup should be done using @see {@link redis.clients.jedis.Jedis#close()}
-        if (isBroken){
-            getJedisPool().returnBrokenResource(jedis);
-        }else{
-            getJedisPool().returnResource(jedis);
-        }
-        */
-        jedis.close();
-    }
-
-    public byte[] getValueByKey(int dbIndex, byte[] key) throws Exception {
-        Jedis jedis = null;
-        byte[] result = null;
-        boolean isBroken = false;
-        try {
-            /*jedis = getJedis();
-            jedis.select(dbIndex);
-            result = jedis.get(key);*/
-            Object obj = SpringRedisUtils.get(new String(key));
-        } catch (Exception e) {
-            isBroken = true;
-            throw e;
-        } finally {
-            returnResource(jedis, isBroken);
-        }
-        return result;
-    }
-
-    public void deleteByKey(int dbIndex, byte[] key) throws Exception {
-        Jedis jedis = null;
-        boolean isBroken = false;
-        try {
-        	SpringRedisUtils.delete(new String(key));
-            /*jedis = getJedis();
-            jedis.select(dbIndex);
-            Long result = jedis.del(key);
-            LoggerUtils.fmtDebug(getClass(), "删除Session结果：%s" , result);*/
-        } catch (Exception e) {
-            isBroken = true;
-            throw e;
-        } finally {
-            returnResource(jedis, isBroken);
-        }
-    }
-
-    public void saveValueByKey(int dbIndex, byte[] key, byte[] value, int expireTime)
-            throws Exception {
-        Jedis jedis = null;
-        boolean isBroken = false;
-        try {
-           /* jedis = getJedis();
-            jedis.select(dbIndex);
-            jedis.set(key, value);*/
-            SpringRedisUtils.set(new String(key), new String(value));
-            if (expireTime > 0)
-               /* jedis.expire(key, expireTime);*/
-            	SpringRedisUtils.expire(new String(key), Long.valueOf(expireTime));
-        } catch (Exception e) {
-            isBroken = true;
-            throw e;
-        } finally {
-            returnResource(jedis, isBroken);
-        }
-    }
 
     public JedisPool getJedisPool() {
         return jedisPool;
@@ -140,38 +71,5 @@ public class JedisManager {
         this.jedisPool = jedisPool;
     }
 
-	/**
-	 * 获取所有Session
-	 * @param dbIndex
-	 * @param redisShiroSession
-	 * @return
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unchecked")
-	public Collection<Session> AllSession(int dbIndex, String redisShiroSession) throws Exception {
-		/*Jedis jedis = null;*/
-        boolean isBroken = false;
-        Set<Session> sessions = new HashSet<Session>();
-        Object obj2 = SpringRedisUtils.get(JedisShiroSessionRepository.REDIS_SHIRO_ALL);
-		try {
-           /* jedis = getJedis();
-            jedis.select(dbIndex);*/
-//            Set<byte[]> byteKeys = jedis.keys((JedisShiroSessionRepository.REDIS_SHIRO_ALL).getBytes());  
-//            if (byteKeys != null && byteKeys.size() > 0) {  
-//                for (byte[] bs : byteKeys) {  
-//                	Session obj = SerializeUtil.deserialize(jedis.get(bs),  
-//                    		 Session.class);  
-//                     if(obj instanceof Session){
-//                    	 sessions.add(obj);  
-//                     }
-//                }  
-//            }  
-        } catch (Exception e) {
-            isBroken = true;
-            throw e;
-        } finally {
-//            returnResource(jedis, isBroken);
-        }
-        return sessions;
-	}
 }
+*/

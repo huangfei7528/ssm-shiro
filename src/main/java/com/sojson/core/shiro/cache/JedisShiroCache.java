@@ -3,14 +3,11 @@ package com.sojson.core.shiro.cache;
 import java.util.Collection;
 import java.util.Set;
 
-import org.apache.shiro.authz.Authorizer;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
-import org.apache.shiro.cache.MapCache;
 
 import com.alibaba.fastjson.JSONObject;
 import com.sojson.common.utils.LoggerUtils;
-import com.sojson.common.utils.SerializeUtil;
 import com.sojson.common.utils.SpringRedisUtils;
 
 /**
@@ -40,20 +37,19 @@ public class JedisShiroCache<K, V> implements Cache<K, V> {
 	 * 为了不和其他的缓存混淆，采用追加前缀方式以作区分
 	 */
     private static final String REDIS_SHIRO_CACHE = "login-message-cache:";
-    /**
-     * Redis 分片(分区)，也可以在配置文件中配置
-     */
-    private static final int DB_INDEX = 1;
 
-    private JedisManager jedisManager;
+//    private JedisManager jedisManager;
     
     private String name;
 
     
-	static final Class<JedisShiroCache> SELF = JedisShiroCache.class;
-    public JedisShiroCache(String name, JedisManager jedisManager) {
+   /* public JedisShiroCache(String name, JedisManager jedisManager) {
         this.name = name;
         this.jedisManager = jedisManager;
+    }*/
+    
+    public JedisShiroCache() {
+       super();
     }
 
     /**
@@ -71,14 +67,11 @@ public class JedisShiroCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K key) throws CacheException {
-//        byte[] byteKey = SerializeUtil.serialize(buildCacheKey(key));
     	String cacheKey = buildCacheKey(key);
-//        byte[] byteValue = new byte[0];
         try {
         	return (V) SpringRedisUtils.get(cacheKey);
-//            byteValue = jedisManager.getValueByKey(DB_INDEX, byteKey);
         } catch (Exception e) {
-            LoggerUtils.error(SELF, "get value by cache throw exception",e);
+            LoggerUtils.error(this.getClass(), "get value by cache throw exception",e);
         }
         return null;
     }
@@ -88,11 +81,10 @@ public class JedisShiroCache<K, V> implements Cache<K, V> {
         V previos = get(key);
         try {
         	String cacheKey = buildCacheKey(key);
-//            jedisManager.saveValueByKey(DB_INDEX, SerializeUtil.serialize(buildCacheKey(key)), SerializeUtil.serialize(value), -1);
         	System.out.println(JSONObject.toJSONString(value));
             SpringRedisUtils.set(cacheKey, value);
         } catch (Exception e) {
-        	 LoggerUtils.error(SELF, "put cache throw exception",e);
+        	 LoggerUtils.error(this.getClass(), "put cache throw exception",e);
         }
         return previos;
     }
@@ -101,11 +93,9 @@ public class JedisShiroCache<K, V> implements Cache<K, V> {
     public V remove(K key) throws CacheException {
         V previos = get(key);
         try {
-        	
-//            jedisManager.deleteByKey(DB_INDEX, SerializeUtil.serialize(buildCacheKey(key)));
             SpringRedisUtils.delete(buildCacheKey(key));
         } catch (Exception e) {
-            LoggerUtils.error(SELF, "remove cache  throw exception",e);
+            LoggerUtils.error(this.getClass(), "remove cache  throw exception",e);
         }
         return previos;
     }
@@ -136,7 +126,6 @@ public class JedisShiroCache<K, V> implements Cache<K, V> {
 
     private String buildCacheKey(Object key) {
     	String prifix = REDIS_SHIRO_CACHE  + key;
-//    	String prifix = REDIS_SHIRO_CACHE + getName() + ":" + SerializeUtil.serialize(key);
         return prifix;
     }
 
