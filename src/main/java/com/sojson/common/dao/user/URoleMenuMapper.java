@@ -1,6 +1,6 @@
-package com.hf.dao;
+package com.sojson.common.dao.user;
 
-import com.hf.model.URoleMenu;
+import com.sojson.common.model.URoleMenu;
 
 public interface URoleMenuMapper {
     int insert(URoleMenu record);

@@ -2,8 +2,6 @@ package com.sojson.common.model;
 
 import java.io.Serializable;
 import java.util.Date;
-
-import net.sf.json.JSONObject;
 /**
  * 
  * 开发公司：itboy.net<br/>

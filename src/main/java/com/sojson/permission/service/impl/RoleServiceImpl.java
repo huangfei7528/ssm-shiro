@@ -9,9 +9,9 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sojson.common.dao.URoleMapper;
-import com.sojson.common.dao.URolePermissionMapper;
-import com.sojson.common.dao.UUserMapper;
+import com.sojson.common.dao.user.URoleMapper;
+import com.sojson.common.dao.user.URolePermissionMapper;
+import com.sojson.common.dao.user.UUserMapper;
 import com.sojson.common.model.URole;
 import com.sojson.common.utils.LoggerUtils;
 import com.sojson.core.mybatis.BaseMybatisDao;

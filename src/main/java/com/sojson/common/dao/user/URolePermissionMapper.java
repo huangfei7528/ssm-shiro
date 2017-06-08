@@ -1,4 +1,4 @@
-package com.sojson.common.dao;
+package com.sojson.common.dao.user;
 
 import java.util.List;
 import java.util.Map;

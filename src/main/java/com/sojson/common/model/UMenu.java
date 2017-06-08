@@ -1,9 +1,15 @@
-package com.hf.model;
+package com.sojson.common.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class UMenu {
-    private Long id;
+public class UMenu implements Serializable{
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7377770884828605021L;
+
+	private Long id;
 
     private Long pid;
 

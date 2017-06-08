@@ -50,7 +50,8 @@
 		<!-- <property name="filters" value="stat" /> -->
 <!--		<property name="filters" value="mergeStat" />-->
 	</bean>
-
+	
+	<!-- 加载mapper配置sql文件 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
 		<!-- <property name="configLocation" value="classpath:mybatis-config.xml"/> -->
@@ -63,8 +64,9 @@
 	<bean id="baseMybatisDao" class="com.sojson.core.mybatis.BaseMybatisDao" >
 		<property name="sqlSessionFactory" ref="sqlSessionFactory" />
 	</bean>	
+	<!-- 加载dao -->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
-		<property name="basePackage" value="com.sojson.common.dao" />
+		<property name="basePackage" value="com.sojson.**.dao.*" />
 		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
 	</bean>
 	 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -74,6 +76,8 @@
 		<tx:attributes>
 		<!-- 	<tx:method name="publish*" /> -->
 			<tx:method name="load*" read-only="true" propagation="SUPPORTS" no-rollback-for="java.lang.Throwable"/>
+			<tx:method name="select*" read-only="true" propagation="SUPPORTS" no-rollback-for="java.lang.Throwable"/>
+			<tx:method name="find*" read-only="true" propagation="SUPPORTS" no-rollback-for="java.lang.Throwable"/>
 			<tx:method name="save*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
 			<tx:method name="add*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
 			<tx:method name="update*" read-only="false" isolation="READ_COMMITTED" propagation="REQUIRED" rollback-for="java.lang.Throwable"/>
@@ -87,7 +91,7 @@
  	<!-- AOP配置--> 
 	<aop:config>
 		<aop:pointcut id="myPointcut"
-			expression="execution(public * com.sojson.*.service.impl.*.*(..))" />
+			expression="execution(public * com.sojson..service.impl.*ServiceImpl.*(..))" />
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="myPointcut" />
 	</aop:config>
 <!--	<aop:config>-->

@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.ModelMap;
 
-import com.sojson.common.dao.UUserMapper;
-import com.sojson.common.dao.UUserRoleMapper;
+import com.sojson.common.dao.user.UUserMapper;
+import com.sojson.common.dao.user.UUserRoleMapper;
 import com.sojson.common.model.UUser;
 import com.sojson.common.model.UUserRole;
 import com.sojson.common.utils.LoggerUtils;

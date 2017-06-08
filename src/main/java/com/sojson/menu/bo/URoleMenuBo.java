@@ -1,6 +1,6 @@
-package com.hf.model;
+package com.sojson.menu.bo;
 
-public class URoleMenu {
+public class URoleMenuBo {
     private Long rId;
 
     private Long mId;

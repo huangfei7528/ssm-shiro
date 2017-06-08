@@ -8,10 +8,10 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sojson.common.dao.UPermissionMapper;
-import com.sojson.common.dao.URolePermissionMapper;
-import com.sojson.common.dao.UUserMapper;
-import com.sojson.common.dao.UUserRoleMapper;
+import com.sojson.common.dao.user.UPermissionMapper;
+import com.sojson.common.dao.user.URolePermissionMapper;
+import com.sojson.common.dao.user.UUserMapper;
+import com.sojson.common.dao.user.UUserRoleMapper;
 import com.sojson.common.model.UPermission;
 import com.sojson.common.model.URolePermission;
 import com.sojson.common.utils.LoggerUtils;
