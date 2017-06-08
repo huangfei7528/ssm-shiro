@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.hf.dao.URoleMenuMapper" >
+  <resultMap id="BaseResultMap" type="com.hf.model.URoleMenu" >
+    <result column="r_id" property="rId" jdbcType="BIGINT" />
+    <result column="m_id" property="mId" jdbcType="BIGINT" />
+  </resultMap>
+  <insert id="insert" parameterType="com.hf.model.URoleMenu" >
+    insert into u_role_menu (r_id, m_id)
+    values (#{rId,jdbcType=BIGINT}, #{mId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.hf.model.URoleMenu" >
+    insert into u_role_menu
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="rId != null" >
+        r_id,
+      </if>
+      <if test="mId != null" >
+        m_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="rId != null" >
+        #{rId,jdbcType=BIGINT},
+      </if>
+      <if test="mId != null" >
+        #{mId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+</mapper>
