@@ -40,6 +40,8 @@
 	        </list>  
 	    </property>  
 	</bean>  
+	  
+	<bean id="applicationInit" class="com.sojson.common.init.ApplicationInit"/>
 	        
 	<bean id="mappingJacksonHttpMessageConverter"  
 	    class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  

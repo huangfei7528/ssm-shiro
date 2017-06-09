@@ -36,7 +36,7 @@ public interface MenuService {
 	 * @param roleId
 	 * @return
 	 */
-	List<Long> findMenuIdByRole(String roleId);
+	List<Long> findMenuIdByRole(Long roleId);
 	
 	
     

@@ -1,10 +1,14 @@
 package com.sojson.menu.bo;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
 
-public class UMenuBo {
-    private Long id;
+public class UMenuBo implements Serializable{
+	
+	private static final long serialVersionUID = -4133445002662497448L;
+
+	private Long id;
 
     private Long pid;
 

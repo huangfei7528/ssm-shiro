@@ -71,7 +71,7 @@
 			  </@shiro.hasPermission>
 			   <@shiro.hasPermission name="/permission/allocation.shtml">
 			  <li class="${(index==5)?string('active',' ')} dropdown">
-			      <a href="${basePath}/permission/allocation.shtml">
+			      <a href="${basePath}/menu/menu.shtml">
 			    	 <i class="glyphicon glyphicon-chevron-right"></i>菜单管理
 			      </a>
 			  </li>

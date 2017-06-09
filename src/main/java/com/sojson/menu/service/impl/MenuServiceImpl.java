@@ -1,11 +1,13 @@
 package com.sojson.menu.service.impl;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.sojson.common.dao.user.UMenuMapper;
 import com.sojson.common.dao.user.URoleMapper;
@@ -16,6 +18,7 @@ import com.sojson.core.mybatis.BaseMybatisDao;
 import com.sojson.menu.bo.UMenuBo;
 import com.sojson.menu.service.MenuService;
 
+@Service
 public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements MenuService {
 
 	@Autowired
@@ -61,7 +64,7 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 		if(!menuSet.isEmpty()){
 			for(UMenu menu : menuSet){
 				UMenuBo menuBo = new UMenuBo();
-				BeanUtils.copyNotNullProperties(menuBo, menu);
+				BeanUtils.copyNotNullProperties(menu, menuBo);
 				menuMap.put(menuBo.getId(), menuBo);
 			}
 			for(UMenu m : menuSet){
@@ -72,12 +75,15 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 					}else{
 						if(menuMap.containsKey(pMenu.getId())){
 							UMenuBo parentMenu = new UMenuBo();
-							BeanUtils.copyNotNullProperties(parentMenu, pMenu);
+							BeanUtils.copyNotNullProperties(pMenu, parentMenu);
 							menuMap.put(pMenu.getId(), parentMenu);
 						}
 						menuMap.get(pMenu.getId()).setParentMenuBo(menuMap.get(pMenu.getId()));
 					}
-					m = menuMapper.selectByPrimaryKey(pMenu.getPid());
+					if(pMenu != null && pMenu.getPid() != null)
+						m = menuMapper.selectByPrimaryKey(pMenu.getPid());
+					else
+						m = null;
 				}while(m != null);
 			}
 			
@@ -92,11 +98,20 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 
 	@Override
 	public Set<UMenuBo> findMenuByParentId(Long parentId) {
-		return null;
+		Set<UMenu> menuSet = menuMapper.findMenuByParentId(parentId);
+		Set<UMenuBo> boSet = new HashSet<UMenuBo>();
+		if(!menuSet.isEmpty()){
+			for(UMenu m : menuSet ){
+				UMenuBo bo = new UMenuBo();
+				BeanUtils.copyNotNullProperties(bo, m);
+				boSet.add(bo);
+			}
+		}
+		return boSet;
 	}
 
 	@Override
-	public List<Long> findMenuIdByRole(String roleId) {
+	public List<Long> findMenuIdByRole(Long roleId) {
 		return menuMapper.findMenuIdByRole(roleId);
 	}
 

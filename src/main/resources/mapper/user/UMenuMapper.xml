@@ -24,13 +24,31 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   
-   <select id="findMenuByParentId" resultMap="BaseResultMap" >
+   <select id="findMenuByParentId" resultMap="BaseResultMap" parameterType="java.lang.Long">
     select 
-    <include refid="Base_Column_List" />
+     <include refid="Base_Column_List" />
     from u_menus
     <trim prefix="(" suffix=")" suffixOverrides="," >
     	  <if test="pid != null" >
-       		 pid
+       		 pid  = #{id,jdbcType=BIGINT}
+     	 </if>
+    </trim>
+  </select>
+  
+  
+  <select id="findMenuIdByRole" resultMap="BaseResultMap" >
+    select 
+     m.id 
+    from u_menus
+     INNER JOIN u_role_menu rm 
+    ON m.id = rm.m_id 
+    INNER JOIN u_role r 
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+    	  <if test="roleId != null" >
+       		 r.id = #{id,jdbcType=BIGINT}
+     	 </if>
+     	 <if test="roleId != null" >
+       		rm.r_id = #{id,jdbcType=BIGINT}
      	 </if>
     </trim>
   </select>

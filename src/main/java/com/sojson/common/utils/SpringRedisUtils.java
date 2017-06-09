@@ -1,6 +1,9 @@
 package com.sojson.common.utils;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,6 +98,34 @@ public class SpringRedisUtils<T> extends CacheTemplate{
     	getRedisTemplate().opsForValue().set(getPreFix(key), value);
     	expire(key, time);
     }
+	
+	public static void setMap(final String key, Map map){
+		delete(key);//清空当前map
+		if(map != null && map.size() >= 1){
+			Iterator<Entry> entryIterator = map.entrySet().iterator();
+			while(entryIterator.hasNext()){
+				Entry entry = entryIterator.next();
+				Object object = entry.getValue();
+				Object mapkey = entry.getKey();
+				setHashKey(key, mapkey.toString(), object);
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T, Z> Map<T, Z> getMap(final String key, Class<T> mapKeyClazz, Class<Z> mapValueClazz) 
+			throws InstantiationException, IllegalAccessException{
+		Map<String, Object> cacheMap = getKeyForMap(key);
+		Map<T, Z> resultMap = new HashMap<T, Z>();
+		if(cacheMap != null && cacheMap.size()>0){
+			for(Entry<String, Object> entry : cacheMap.entrySet()){
+				T v_key = (T) entry.getKey();
+				Z v_value = (Z) entry.getValue();
+				resultMap.put(v_key, v_value);
+			}
+		}
+		return resultMap;
+	}
     
     public static <T> T getToJson(final String key, Class<T> elementType) {
         String jsonValue = (String) getRedisTemplate().opsForValue().get(getPreFix(key));
@@ -106,7 +137,7 @@ public class SpringRedisUtils<T> extends CacheTemplate{
     	return  (T) getRedisTemplate().opsForValue().get(getPreFix(key));
     	
     }
-
+    
     @SuppressWarnings("unchecked")
 	public static boolean setNX(final String key, String value) {
         return getRedisTemplate().opsForValue().setIfAbsent(getPreFix(key), value);

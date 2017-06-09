@@ -63,6 +63,7 @@
   <welcome-file-list>
     <welcome-file>/user/index.shtml</welcome-file>
   </welcome-file-list>
+  
   <error-page>
     <error-code>404</error-code>
     <location>/open/404.shtml</location>
