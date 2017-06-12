@@ -4,7 +4,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
 
 import com.sojson.common.utils.Constants;
 import com.sojson.common.utils.SpringRedisUtils;

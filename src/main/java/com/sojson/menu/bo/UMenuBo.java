@@ -2,7 +2,10 @@ package com.sojson.menu.bo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
+
+import com.sojson.common.utils.Constants;
 
 public class UMenuBo implements Serializable{
 	
@@ -28,8 +31,16 @@ public class UMenuBo implements Serializable{
 
     private UMenuBo parentMenuBo;
     
-    private Set<UMenuBo> childrenList;
-    
+    private Set<UMenuBo> childrenList = new HashSet<UMenuBo>();
+    /**
+	 * 树形结构展示时，构造的顶级目录
+	 * @return
+	 */
+	public static UMenuBo getRootBean(){
+		UMenuBo rootBean = new UMenuBo();
+		rootBean.setId(Constants.TREE_ROOT_ID);
+		return rootBean;
+	}
     public Long getId() {
         return id;
     }

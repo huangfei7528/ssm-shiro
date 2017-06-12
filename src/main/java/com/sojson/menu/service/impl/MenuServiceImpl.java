@@ -61,6 +61,7 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 	public Map<Long, UMenuBo> findMenuAll() {
 		Set<UMenu> menuSet = menuMapper.findMenuByParentId(null);
 		Map<Long, UMenuBo> menuMap = new HashMap<Long, UMenuBo>();
+		menuMap.put(Constants.TREE_ROOT_ID, UMenuBo.getRootBean());
 		if(!menuSet.isEmpty()){
 			for(UMenu menu : menuSet){
 				UMenuBo menuBo = new UMenuBo();
@@ -73,12 +74,12 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 					if(pMenu == null){//父节点为空，则设置为顶级目录
 						menuMap.get(m.getId()).setParentMenuBo(menuMap.get(Constants.TREE_ROOT_ID));
 					}else{
-						if(menuMap.containsKey(pMenu.getId())){
+						if(!menuMap.containsKey(pMenu.getId())){
 							UMenuBo parentMenu = new UMenuBo();
 							BeanUtils.copyNotNullProperties(pMenu, parentMenu);
 							menuMap.put(pMenu.getId(), parentMenu);
 						}
-						menuMap.get(pMenu.getId()).setParentMenuBo(menuMap.get(pMenu.getId()));
+						menuMap.get(m.getId()).setParentMenuBo(menuMap.get(pMenu.getId()));
 					}
 					if(pMenu != null && pMenu.getPid() != null)
 						m = menuMapper.selectByPrimaryKey(pMenu.getPid());
@@ -103,7 +104,7 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 		if(!menuSet.isEmpty()){
 			for(UMenu m : menuSet ){
 				UMenuBo bo = new UMenuBo();
-				BeanUtils.copyNotNullProperties(bo, m);
+				BeanUtils.copyNotNullProperties(m, bo);
 				boSet.add(bo);
 			}
 		}

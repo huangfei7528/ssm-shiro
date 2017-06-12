@@ -14,10 +14,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSONObject;
 import com.sojson.common.controller.BaseController;
 import com.sojson.common.utils.BeanUtils;
 import com.sojson.common.utils.Constants;
 import com.sojson.common.utils.SpringRedisUtils;
+import com.sojson.common.ztree.LayuiTreeNode;
 import com.sojson.common.ztree.MenuZTreeNode;
 import com.sojson.menu.bo.UMenuBo;
 import com.sojson.menu.service.MenuService;
@@ -35,19 +37,36 @@ public class MenuController extends BaseController{
 	}
 	
 	@ResponseBody
-	@RequestMapping(value="loadMenu",method=RequestMethod.POST)
-	public List<MenuZTreeNode> loadMenu(Long parentId) 
+	@RequestMapping(value="loadMenu")
+	public String loadMenu(Long parentId) 
 			throws InstantiationException, IllegalAccessException{
-		Set<UMenuBo> menuList = menuService.findMenuByParentId(parentId);
+		Map<Long, UMenuBo> menuMap = SpringRedisUtils.getMap(Constants.ALL_MENU, Long.class, UMenuBo.class);
+		Integer level = 1;
+		if(parentId == null){
+			parentId = Constants.TREE_ROOT_ID;
+			level = 2;
+		}
+		Set<UMenuBo> menuList = menuMap.get(parentId.toString()).getChildrenList();
 		List<MenuZTreeNode> menuNodeList = new ArrayList<MenuZTreeNode>();
-		if(menuList.isEmpty()){
+		if(!menuList.isEmpty()){
 			for(UMenuBo bean: menuList){
+				LayuiTreeNode tree = new LayuiTreeNode();
+				tree.setId(bean.getId());
+				tree.setName(bean.getName());
+				tree.setAlias(bean.getRemark());
+				tree.setUrl(bean.getUrl());
+				tree.setPid(bean.getPid());
+				tree.setSpread(true);
+				if(parentId == -1){
+					
+				}
+				
 				MenuZTreeNode menuNode = makeMenuTreeNode(bean, StringUtils.isEmpty(parentId));////首级节点，自动展开
 				menuNode.setOpenLevel(2);//自动展开前面2级
 				menuNodeList.add(menuNode);
 			}
 		}
-		return menuNodeList;
+		return JSONObject.toJSONString(menuNodeList);
 	}
 	
 
@@ -61,9 +80,8 @@ public class MenuController extends BaseController{
 	 */
 	private MenuZTreeNode makeMenuTreeNode(UMenuBo bean, boolean open) 
 			throws InstantiationException, IllegalAccessException{
-		/*Map<Long, UMenuBo> map=SpringRedisUtils.getMap(Constants.ALL_MENU, Long.class, UMenuBo.class);*/
 		MenuZTreeNode node = new MenuZTreeNode();
-		BeanUtils.copyProperties(node.getMenu(), bean);//自动拷贝，菜单树固有属性
+		BeanUtils.copyProperties(bean, node.getMenu());//自动拷贝，菜单树固有属性
 		node.getMenu().setId(bean.getId().intValue());
 		node.setId(String.valueOf(bean.getId()));
 		node.setpId(String.valueOf(bean.getParentMenuBo().getId()));

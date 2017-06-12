@@ -12,28 +12,13 @@
 		<script  src="/js/common/layer/layer.js"></script>
 		<script  src="/js/common/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<script  src="/js/shiro.demo.js"></script>
+		<script src="/js/jquery-ztree/jquery.ztree.all-3.5.js"></script>
+		<script src="/js/jquery-ztree/jquery.myTree.js"></script>
 		<script >
-		/* so.init(function(){
-				//初始化全选。
-				so.checkBoxInit('#checkAll','[check=box]');
-				<@shiro.hasPermission name="/role/clearRoleByUserIds.shtml">
-				//全选
-				so.id('deleteAll').on('click',function(){
-					var checkeds = $('[check=box]:checked');
-					if(!checkeds.length){
-						return layer.msg('请选择要清除的用户。',so.default),!0;
-					}
-					var array = [];
-					checkeds.each(function(){
-						array.push(this.value);
-					});
-					return deleteById(array);
-				});
-				</@shiro.hasPermission>
-			}); */
+			var $currentNode;// 当前操作的节点
 			$(document).ready(function() {
 				var myTree = $("#treeMenu").myTree({
-					url : $ctx + "/menu/loadMenu.do",
+					url : "${basePath}/menu/loadMenu.shtml",
 					callback : {
 						onClick : clickTree,
 						onExpand : zTreeOnExpand
@@ -49,6 +34,54 @@
 					$.fn.zTree.getZTreeObj("treeDemo").expandNode(treeNode, true, false,
 							true, true);
 				}
+			}
+			// 展开树节点
+			function zTreeOnExpand(event, treeId, treeNode) {
+				$currentNode = treeNode;
+				$.fn.zTree.getZTreeObj("treeDemo").selectNode(treeNode);// 选中被展开的节点
+				refreshData(treeNode);
+			};
+			
+			// 刷新数据
+			function refreshData(treeNode) {
+			/* 	writeCurrentMenu(treeNode);
+				writeJuniorMenu(treeNode); */
+			}
+			// 当前菜单
+			function writeCurrentMenu(treeNode) {
+				$("#currentMenu").writeAttr(treeNode.menu);
+				$("#idForm [name='parentId']").val("");
+				$("#idForm [name='entityId']").val("");
+				if (treeNode.level == 0) {// 根目录不能编辑
+					$("#modifyMenuBtn").hide();// 隐藏按钮
+					// 新增菜单时，用到的父亲ID和排序
+					$("#idForm [name='parentId']").val(treeNode.menu.id);
+				} else {// 编辑当前菜单，需要的内容
+					/*
+					 * $("#modifyMenuBtn").show();//显示按钮
+					 * $("#modifyMenuDiv").writeAttr(treeNode.menu);//填充对应属性
+					 */$("#idForm [name='entityId']").val(treeNode.menu.id);
+					/* $("#idForm [name='oldTitle']").val(treeNode.menu.title); */
+					// 新增菜单时，用到的父亲ID和排序
+					$("#idForm [name='parentId']").val(treeNode.pId);
+				}
+
+			}
+			// 下级的菜单
+			function writeJuniorMenu(treeNode) {
+				$("#juniorMenu tbody").children().remove();
+				var html = ""
+				if (treeNode.isParent) {// 遍历所有孩子信息
+					$.each(treeNode.children, function(idx, element) {
+						html += "<tr><td><input type='checkbox' class='idcheckbox' value='"
+								+ element.menu.id + "'></td><td>" + element.menu.title
+								+ "</td><td>" + element.menu.name + "</td><td>"
+								+ nullToEmpty(element.menu.url) + "</td><td>"
+								+ nullToEmpty(element.menu.orderBy) + "</td><td>"
+								+ nullToEmpty(element.menu.description) + "</td></tr>"
+					});
+				}
+				$("#juniorMenu tbody").html(html);
 			}
 		</script>
 	</head>
