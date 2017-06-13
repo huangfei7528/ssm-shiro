@@ -8,81 +8,104 @@
 		<link   rel="shortcut icon" href="http://img.wenyifan.net/images/favicon.ico" />
 		<link href="/js/common/bootstrap/3.3.5/css/bootstrap.min.css?${_v}" rel="stylesheet"/>
 		<link href="/css/common/base.css?${_v}" rel="stylesheet"/>
+		<link rel="stylesheet" href="/js/layui/css/layui.css"  media="all">
+		
 		<script  src="http://open.itboy.net/common/jquery/jquery1.8.3.min.js"></script>
 		<script  src="/js/common/layer/layer.js"></script>
 		<script  src="/js/common/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<script  src="/js/shiro.demo.js"></script>
-		<script src="/js/jquery-ztree/jquery.ztree.all-3.5.js"></script>
-		<script src="/js/jquery-ztree/jquery.myTree.js"></script>
+		<script src="/js/layui/layui.js"></script>
+		
 		<script >
-			var $currentNode;// 当前操作的节点
-			$(document).ready(function() {
-				var myTree = $("#treeMenu").myTree({
-					url : "${basePath}/menu/loadMenu.shtml",
-					callback : {
-						onClick : clickTree,
-						onExpand : zTreeOnExpand
+			layui.use(['tree', 'layer'], function(){
+				var layer = layui.layer
+				  ,$ = layui.jquery,
+				  node = new Array(); 
+				
+				function treeClick(node){
+					console.log(node) //node即为当前点击的节点数据
+					
+				}
+				//生成一个模拟树
+				var createTree = function(node, start){
+				    node = node || function(){
+				      var arr = [];
+				      for(var i = 1; i < 10; i++){
+				        arr.push({
+				          name: i.toString().replace(/(\d)/, '$1$1$1$1$1$1$1$1$1')
+				        });
+				      }
+				      return arr;
+				    }();
+				    start = start || 1;  
+				    layui.each(node, function(index, item){  
+				      if(start < 10 && index < 9){
+				        var child = [
+				          {
+				            name: (1 + index + start).toString().replace(/(\d)/, '$1$1$1$1$1$1$1$1$1')
+				          }
+				        ];
+				        node[index].children = child;
+				        createTree(child, index + start + 1);
+				      }
+				    });
+				    return node;
+				};
+				
+				var treeChange = function(node, parentId, childNode){
+					if(node){
+						layui.each(node, function(index, item){
+							if(node[index].id == parentId){
+								var chileren = node[index].children;
+								if(chileren){
+									chileren = new Arry();
+								}
+								chileren.push(childNode);
+								node[index].children = chileren;
+								return ;
+							}else{
+								treeChange();
+							}
+						});
 					}
-				});
-			});
-			// 菜单点击事件
-			function clickTree(event, treeId, treeNode, clickFlag) {
-				if (!treeNode.isParent || treeNode.open) {// 打开的，则直接更改显示数据
-					$currentNode = treeNode;
-					refreshData(treeNode);
-				} else {
-					$.fn.zTree.getZTreeObj("treeDemo").expandNode(treeNode, true, false,
-							true, true);
-				}
-			}
-			// 展开树节点
-			function zTreeOnExpand(event, treeId, treeNode) {
-				$currentNode = treeNode;
-				$.fn.zTree.getZTreeObj("treeDemo").selectNode(treeNode);// 选中被展开的节点
-				refreshData(treeNode);
-			};
-			
-			// 刷新数据
-			function refreshData(treeNode) {
-			/* 	writeCurrentMenu(treeNode);
-				writeJuniorMenu(treeNode); */
-			}
-			// 当前菜单
-			function writeCurrentMenu(treeNode) {
-				$("#currentMenu").writeAttr(treeNode.menu);
-				$("#idForm [name='parentId']").val("");
-				$("#idForm [name='entityId']").val("");
-				if (treeNode.level == 0) {// 根目录不能编辑
-					$("#modifyMenuBtn").hide();// 隐藏按钮
-					// 新增菜单时，用到的父亲ID和排序
-					$("#idForm [name='parentId']").val(treeNode.menu.id);
-				} else {// 编辑当前菜单，需要的内容
-					/*
-					 * $("#modifyMenuBtn").show();//显示按钮
-					 * $("#modifyMenuDiv").writeAttr(treeNode.menu);//填充对应属性
-					 */$("#idForm [name='entityId']").val(treeNode.menu.id);
-					/* $("#idForm [name='oldTitle']").val(treeNode.menu.title); */
-					// 新增菜单时，用到的父亲ID和排序
-					$("#idForm [name='parentId']").val(treeNode.pId);
-				}
-
-			}
-			// 下级的菜单
-			function writeJuniorMenu(treeNode) {
-				$("#juniorMenu tbody").children().remove();
-				var html = ""
-				if (treeNode.isParent) {// 遍历所有孩子信息
-					$.each(treeNode.children, function(idx, element) {
-						html += "<tr><td><input type='checkbox' class='idcheckbox' value='"
-								+ element.menu.id + "'></td><td>" + element.menu.title
-								+ "</td><td>" + element.menu.name + "</td><td>"
-								+ nullToEmpty(element.menu.url) + "</td><td>"
-								+ nullToEmpty(element.menu.orderBy) + "</td><td>"
-								+ nullToEmpty(element.menu.description) + "</td></tr>"
+				};	
+				
+				var init = function(node, parentId){
+					$.ajax({
+						 type: 'POST',
+						 url: '${basePath}/menu/loadMenu.shtml',
+						 data: {'parentId':parentId},
+						 dataType:"json",
+						 async : false,
+				         success:function(data){
+				        	 if(data && data.status == 200){
+				        		 node = node || eval(data.treeList);
+				        		 console.log(node) //node即为当前点击的节点数据
+				        		
+				        	 }else{
+				        		 layer.alert(data.message);
+				        		 layer.close();
+				        	 }
+				         }
 					});
-				}
-				$("#juniorMenu tbody").html(html);
-			}
+					return node
+				};
+				var treeInit = function(node){
+					node = init(node);
+					if(node[0].nextLevel && node[0].isParent){
+						
+					}
+					return node;
+				};
+				
+				layui.tree({
+				    elem: '#treeMenu'//指定元素
+				    ,nodes: treeInit()
+				    ,click: function(item){
+				    	treeClick(item);
+				    }
+				  });
+			});
 		</script>
 	</head>
 	<body data-target="#one" data-spy="scroll">
@@ -97,7 +120,7 @@
 					<hr>
 					<!-- 树 -->
 					<div class="span3" style="float: left; overflow-y: scroll; overflow-x: auto;">
-						<ul id="treeMenu" class="ztree" style="width: 150px; height: 77%"></ul>
+						<ul id="treeMenu" class="ztree"></ul>
 					</div>
 				</div>
 			</div><#--/row-->

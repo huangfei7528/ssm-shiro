@@ -1,7 +1,6 @@
 package com.sojson.common.ztree;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class LayuiTreeNode implements Comparable<LayuiTreeNode>{
@@ -20,9 +19,9 @@ public class LayuiTreeNode implements Comparable<LayuiTreeNode>{
 	
 	private String url;
 	
-	private boolean isParent;//当前节点是否是父级节点（即是否有孩子节点）	
+	private Boolean isParent;//当前节点是否是父级节点（即是否有孩子节点）	
 	
-	private Integer openLevel;//设定自动展开前面几级，1表示展开第一级，2表示展开前面两级
+	private Boolean nextLevel;//是否自动展开下一级
 	
 	private Integer orderBy;
 	
@@ -104,22 +103,6 @@ public class LayuiTreeNode implements Comparable<LayuiTreeNode>{
 		this.url = url;
 	}
 
-	public boolean isParent() {
-		return isParent;
-	}
-
-	public void setParent(boolean isParent) {
-		this.isParent = isParent;
-	}
-
-	public Integer getOpenLevel() {
-		return openLevel;
-	}
-
-	public void setOpenLevel(Integer openLevel) {
-		this.openLevel = openLevel;
-	}
-
 	public Integer getOrderBy() {
 		return orderBy;
 	}
@@ -134,6 +117,22 @@ public class LayuiTreeNode implements Comparable<LayuiTreeNode>{
 
 	public void setChildren(Set<LayuiTreeNode> children) {
 		this.children = children;
+	}
+
+	public Boolean getIsParent() {
+		return isParent;
+	}
+
+	public void setIsParent(Boolean isParent) {
+		this.isParent = isParent;
+	}
+
+	public Boolean getNextLevel() {
+		return nextLevel;
+	}
+
+	public void setNextLevel(Boolean nextLevel) {
+		this.nextLevel = nextLevel;
 	}
 
 	
