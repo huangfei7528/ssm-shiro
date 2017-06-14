@@ -28,11 +28,9 @@
     select 
      <include refid="Base_Column_List" />
     from u_menus
-    <trim prefix="(" suffix=")" suffixOverrides="," >
-    	  <if test="pid != null" >
-       		 pid  = #{id,jdbcType=BIGINT}
-     	 </if>
-    </trim>
+  	<if test="pid != null" >
+	    where pid  = #{pid}
+   	</if>
   </select>
   
   
@@ -45,10 +43,10 @@
     INNER JOIN u_role r 
     <trim prefix="(" suffix=")" suffixOverrides="," >
     	  <if test="roleId != null" >
-       		 r.id = #{id,jdbcType=BIGINT}
+       		 r.id = #{roleId,jdbcType=BIGINT}
      	 </if>
      	 <if test="roleId != null" >
-       		rm.r_id = #{id,jdbcType=BIGINT}
+       		rm.r_id = #{roleId,jdbcType=BIGINT}
      	 </if>
     </trim>
   </select>

@@ -1,5 +1,5 @@
 /*
- * JQuery zTree excheck v3.5.16
+ * JQuery zTree excheck v3.5.26
  * http://zTree.me/
  *
  * Copyright (c) 2010 Hunter.z
@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  *
  * email: hunter.z@263.net
- * Date: 2014-03-09
+ * Date: 2016-11-03
  */
 (function($){
 	//default consts of excheck
@@ -505,8 +505,7 @@
 			} else {
 				obj.show();
 			}
-			obj.removeClass();
-			obj.addClass(view.makeChkClass(setting, node));
+            obj.attr('class', view.makeChkClass(setting, node));
 		},
 		setParentNodeCheckBox: function(setting, node, value, srcNode) {
 			var childKey = setting.data.key.children,
@@ -547,7 +546,7 @@
 
 			var hasDisable = false;
 			if (node[childKey]) {
-				for (var i = 0, l = node[childKey].length; i < l && node.chkDisabled !== true; i++) {
+				for (var i = 0, l = node[childKey].length; i < l; i++) {
 					var sNode = node[childKey][i];
 					view.setSonNodeCheckBox(setting, sNode, value, srcNode);
 					if (sNode.chkDisabled === true) hasDisable = true;
@@ -601,7 +600,7 @@
 	data.addZTreeTools(_zTreeTools);
 
 	var _createNodes = view.createNodes;
-	view.createNodes = function(setting, level, nodes, parentNode) {
+	view.createNodes = function(setting, level, nodes, parentNode, index) {
 		if (_createNodes) _createNodes.apply(view, arguments);
 		if (!nodes) return;
 		view.repairParentChkClassWithSelf(setting, parentNode);
@@ -616,7 +615,7 @@
 	}
 
 	var _appendNodes = view.appendNodes;
-	view.appendNodes = function(setting, level, nodes, parentNode, initFlag, openFlag) {
+	view.appendNodes = function(setting, level, nodes, parentNode, index, initFlag, openFlag) {
 		var html = "";
 		if (_appendNodes) {
 			html = _appendNodes.apply(view, arguments);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html lang="zh-cn">
 	<head>
 		<meta charset="utf-8" />
@@ -8,104 +8,108 @@
 		<link   rel="shortcut icon" href="http://img.wenyifan.net/images/favicon.ico" />
 		<link href="/js/common/bootstrap/3.3.5/css/bootstrap.min.css?${_v}" rel="stylesheet"/>
 		<link href="/css/common/base.css?${_v}" rel="stylesheet"/>
-		<link rel="stylesheet" href="/js/layui/css/layui.css"  media="all">
+		<link href="/js/jquery-ztree/css/zTreeStyle.css" rel="stylesheet" type="text/css" />
 		
-		<script  src="http://open.itboy.net/common/jquery/jquery1.8.3.min.js"></script>
+		<script src="/js/jquery-3.2.1.min.js"></script>
+    	<script src="/js/jquery-ztree/jquery.ztree.core-3.5.26.js" type="text/javascript"></script>
+   		<script src="/js/jquery-ztree/jquery.ztree.exedit-3.5.26.js" type="text/javascript"></script>
+   		
 		<script  src="/js/common/layer/layer.js"></script>
 		<script  src="/js/common/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 		<script  src="/js/shiro.demo.js"></script>
-		<script src="/js/layui/layui.js"></script>
+		
 		
 		<script >
-			layui.use(['tree', 'layer'], function(){
-				var layer = layui.layer
-				  ,$ = layui.jquery,
-				  node = new Array(); 
-				
-				function treeClick(node){
-					console.log(node) //node即为当前点击的节点数据
-					
+			var zTreeObj;
+			var setting = {
+				async: {
+					enable: true,
+					url: '${basePath}/menu/loadMenu.shtml', 
+					autoParam: ['id=parentId'],
+					otherParam: null,
+					dataFilter: zTreeFilter,
+					dataType: "json",
+					type: "post"
+				},
+				view: {
+					dblClickExpand: false,//禁用双击
+					showIcon:true
+				},
+				edit:{
+					enable:true,
+					showRenameBtn:true
+				},
+				callback:{
+					onClick: zTreeOnClick,
+					onExpand:zTreeOnExpand,
+					beforeRemove:ztreeBeforeRemove
 				}
-				//生成一个模拟树
-				var createTree = function(node, start){
-				    node = node || function(){
-				      var arr = [];
-				      for(var i = 1; i < 10; i++){
-				        arr.push({
-				          name: i.toString().replace(/(\d)/, '$1$1$1$1$1$1$1$1$1')
-				        });
-				      }
-				      return arr;
-				    }();
-				    start = start || 1;  
-				    layui.each(node, function(index, item){  
-				      if(start < 10 && index < 9){
-				        var child = [
-				          {
-				            name: (1 + index + start).toString().replace(/(\d)/, '$1$1$1$1$1$1$1$1$1')
-				          }
-				        ];
-				        node[index].children = child;
-				        createTree(child, index + start + 1);
-				      }
-				    });
-				    return node;
-				};
-				
-				var treeChange = function(node, parentId, childNode){
-					if(node){
-						layui.each(node, function(index, item){
-							if(node[index].id == parentId){
-								var chileren = node[index].children;
-								if(chileren){
-									chileren = new Arry();
-								}
-								chileren.push(childNode);
-								node[index].children = chileren;
-								return ;
-							}else{
-								treeChange();
-							}
-						});
-					}
-				};	
-				
-				var init = function(node, parentId){
-					$.ajax({
-						 type: 'POST',
-						 url: '${basePath}/menu/loadMenu.shtml',
-						 data: {'parentId':parentId},
-						 dataType:"json",
-						 async : false,
-				         success:function(data){
-				        	 if(data && data.status == 200){
-				        		 node = node || eval(data.treeList);
-				        		 console.log(node) //node即为当前点击的节点数据
-				        		
-				        	 }else{
-				        		 layer.alert(data.message);
-				        		 layer.close();
-				        	 }
-				         }
-					});
-					return node
-				};
-				var treeInit = function(node){
-					node = init(node);
-					if(node[0].nextLevel && node[0].isParent){
-						
-					}
-					return node;
-				};
-				
-				layui.tree({
-				    elem: '#treeMenu'//指定元素
-				    ,nodes: treeInit()
-				    ,click: function(item){
-				    	treeClick(item);
-				    }
-				  });
+			};
+			function ztreeBeforeRemove(reeId, treeNode){
+				var flag = false;
+				$.ajax({
+					 type: 'POST',
+					 url: '${basePath}/menu/deleteMenu.shtml',
+					 data: {'id':treeNode.id},
+					 dataType:"json",
+					 async : false,
+			         success:function(data){
+			        	 if(data && data.status == 200){
+			        		 flag = result(true);
+			        	 }else{
+			        		 flag = result(false);
+			        		 layer.alert(data.message);
+			        	 }
+			         }
+				});
+				return flag;
+			};
+			
+			function result(flag){
+				return flag;
+			}
+			
+			function zTreeFilter(treeId, parentNode, childData) {
+				 if(childData && childData.status == 200){
+					 childData = eval(childData.treeList);
+					 console.log("zTreeFilter:"+childData)
+			   	 }
+			    return childData;
+			};
+			var zTreeOnExpand = function(){
+				console.log("zTreeOnExpand:")
+			};
+			var zTreeOnClick = function(){
+				var treeObj = $.fn.zTree.getZTreeObj("treeMenu");
+				//得到选中的节点
+			    var node = treeObj.getSelectedNodes();
+			    console.log("zTreeOnClick:")
+			};
+			$(document).ready(function () {
+				var node ;
+				node = init(node);
+				zTreeObj = $.fn.zTree.init($("#treeMenu"), setting, node);
 			});
+			
+			var init = function(node, parentId){
+				$.ajax({
+					 type: 'POST',
+					 url: '${basePath}/menu/loadMenu.shtml',
+					 data: {'parentId':parentId},
+					 dataType:"json",
+					 async : false,
+			         success:function(data){
+			        	 if(data && data.status == 200){
+			        		 node = node || eval(data.treeList);
+			        		 console.log(node) //node即为当前点击的节点数据
+			        	 }else{
+			        		 layer.alert(data.message);
+			        		 layer.close();
+			        	 }
+			         }
+				});
+				return node
+			};
 		</script>
 	</head>
 	<body data-target="#one" data-spy="scroll">
@@ -121,6 +125,7 @@
 					<!-- 树 -->
 					<div class="span3" style="float: left; overflow-y: scroll; overflow-x: auto;">
 						<ul id="treeMenu" class="ztree"></ul>
+						<input type = "hidden" name = "parentId" id = "parentId" value = ""/>
 					</div>
 				</div>
 			</div><#--/row-->

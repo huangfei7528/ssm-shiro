@@ -98,8 +98,8 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 	}
 
 	@Override
-	public Set<UMenuBo> findMenuByParentId(Long parentId) {
-		Set<UMenu> menuSet = menuMapper.findMenuByParentId(parentId);
+	public Set<UMenuBo> findMenuByParentId(Long pid) {
+		Set<UMenu> menuSet = menuMapper.findMenuByParentId(pid);
 		Set<UMenuBo> boSet = new HashSet<UMenuBo>();
 		if(!menuSet.isEmpty()){
 			for(UMenu m : menuSet ){

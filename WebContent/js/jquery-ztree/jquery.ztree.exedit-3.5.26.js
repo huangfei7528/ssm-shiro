@@ -1,5 +1,5 @@
 /*
- * JQuery zTree exedit v3.5.16
+ * JQuery zTree exedit v3.5.26
  * http://zTree.me/
  *
  * Copyright (c) 2010 Hunter.z
@@ -8,7 +8,7 @@
  * http://www.opensource.org/licenses/mit-license.php
  *
  * email: hunter.z@263.net
- * Date: 2014-03-09
+ * Date: 2016-11-03
  */
 (function($){
 	//default consts of exedit
@@ -192,7 +192,7 @@
 			}
 			if (moveType == consts.move.TYPE_INNER) {
 				function copyCallback() {
-					view.addNodes(_this.setting, targetNode, [newNode], isSilent);
+					view.addNodes(_this.setting, targetNode, -1, [newNode], isSilent);
 				}
 
 				if (tools.canAsync(this.setting, targetNode)) {
@@ -201,7 +201,7 @@
 					copyCallback();
 				}
 			} else {
-				view.addNodes(this.setting, targetNode.parentNode, [newNode], isSilent);
+				view.addNodes(this.setting, targetNode.parentNode, -1, [newNode], isSilent);
 				view.moveNode(this.setting, targetNode, newNode, moveType, false, isSilent);
 			}
 			return newNode;
@@ -508,14 +508,15 @@
 					var dY = 0;
 					if (tmpTarget && tmpTarget.attr("id")!=targetSetting.treeId) {
 						var tmpTargetNode = tmpTargetNodeId == null ? null: data.getNodeCache(targetSetting, tmpTargetNodeId),
-						isCopy = ((event.ctrlKey || event.metaKey) && setting.edit.drag.isMove && setting.edit.drag.isCopy) || (!setting.edit.drag.isMove && setting.edit.drag.isCopy),
-						isPrev = !!(preNode && tmpTargetNodeId === preNode.tId),
-						isNext = !!(nextNode && tmpTargetNodeId === nextNode.tId),
-						isInner = (tmpNode.parentTId && tmpNode.parentTId == tmpTargetNodeId),
-						canPrev = (isCopy || !isNext) && tools.apply(targetSetting.edit.drag.prev, [targetSetting.treeId, nodes, tmpTargetNode], !!targetSetting.edit.drag.prev),
-						canNext = (isCopy || !isPrev) && tools.apply(targetSetting.edit.drag.next, [targetSetting.treeId, nodes, tmpTargetNode], !!targetSetting.edit.drag.next),
-						canInner = (isCopy || !isInner) && !(targetSetting.data.keep.leaf && !tmpTargetNode.isParent) && tools.apply(targetSetting.edit.drag.inner, [targetSetting.treeId, nodes, tmpTargetNode], !!targetSetting.edit.drag.inner);
-						if (!canPrev && !canNext && !canInner) {
+							isCopy = ((event.ctrlKey || event.metaKey) && setting.edit.drag.isMove && setting.edit.drag.isCopy) || (!setting.edit.drag.isMove && setting.edit.drag.isCopy),
+							isPrev = !!(preNode && tmpTargetNodeId === preNode.tId),
+							isNext = !!(nextNode && tmpTargetNodeId === nextNode.tId),
+							isInner = (tmpNode.parentTId && tmpNode.parentTId == tmpTargetNodeId),
+							canPrev = (isCopy || !isNext) && tools.apply(targetSetting.edit.drag.prev, [targetSetting.treeId, nodes, tmpTargetNode], !!targetSetting.edit.drag.prev),
+							canNext = (isCopy || !isPrev) && tools.apply(targetSetting.edit.drag.next, [targetSetting.treeId, nodes, tmpTargetNode], !!targetSetting.edit.drag.next),
+							canInner = (isCopy || !isInner) && !(targetSetting.data.keep.leaf && !tmpTargetNode.isParent) && tools.apply(targetSetting.edit.drag.inner, [targetSetting.treeId, nodes, tmpTargetNode], !!targetSetting.edit.drag.inner);
+
+						function clearMove() {
 							tmpTarget = null;
 							tmpTargetNodeId = "";
 							moveType = consts.move.TYPE_INNER;
@@ -526,15 +527,19 @@
 								clearTimeout(window.zTreeMoveTimer);
 								window.zTreeMoveTargetNodeTId = null
 							}
+						}
+						if (!canPrev && !canNext && !canInner) {
+							clearMove();
 						} else {
 							var tmpTargetA = $("#" + tmpTargetNodeId + consts.id.A, tmpTarget),
-							tmpNextA = tmpTargetNode.isLastNode ? null : $("#" + tmpTargetNode.getNextNode().tId + consts.id.A, tmpTarget.next()),
-							tmpTop = tmpTargetA.offset().top,
-							tmpLeft = tmpTargetA.offset().left,
-							prevPercent = canPrev ? (canInner ? 0.25 : (canNext ? 0.5 : 1) ) : -1,
-							nextPercent = canNext ? (canInner ? 0.75 : (canPrev ? 0.5 : 0) ) : -1,
-							dY_percent = (event.clientY + docScrollTop - tmpTop)/tmpTargetA.height();
-							if ((prevPercent==1 ||dY_percent<=prevPercent && dY_percent>=-.2) && canPrev) {
+								tmpNextA = tmpTargetNode.isLastNode ? null : $("#" + tmpTargetNode.getNextNode().tId + consts.id.A, tmpTarget.next()),
+								tmpTop = tmpTargetA.offset().top,
+								tmpLeft = tmpTargetA.offset().left,
+								prevPercent = canPrev ? (canInner ? 0.25 : (canNext ? 0.5 : 1) ) : -1,
+								nextPercent = canNext ? (canInner ? 0.75 : (canPrev ? 0.5 : 0) ) : -1,
+								dY_percent = (event.clientY + docScrollTop - tmpTop)/tmpTargetA.height();
+
+							if ((prevPercent==1 || dY_percent<=prevPercent && dY_percent>=-.2) && canPrev) {
 								dX = 1 - tmpArrow.width();
 								dY = tmpTop - tmpArrow.height()/2;
 								moveType = consts.move.TYPE_PREV;
@@ -542,41 +547,46 @@
 								dX = 1 - tmpArrow.width();
 								dY = (tmpNextA == null || (tmpTargetNode.isParent && tmpTargetNode.open)) ? (tmpTop + tmpTargetA.height() - tmpArrow.height()/2) : (tmpNextA.offset().top - tmpArrow.height()/2);
 								moveType = consts.move.TYPE_NEXT;
-							}else {
+							} else if (canInner) {
 								dX = 5 - tmpArrow.width();
 								dY = tmpTop;
 								moveType = consts.move.TYPE_INNER;
+							} else {
+								clearMove();
 							}
-							tmpArrow.css({
-								"display":"block",
-								"top": dY + "px",
-								"left": (tmpLeft + dX) + "px"
-							});
-							tmpTargetA.addClass(consts.node.TMPTARGET_NODE + "_" + moveType);
 
-							if (preTmpTargetNodeId != tmpTargetNodeId || preTmpMoveType != moveType) {
-								startTime = (new Date()).getTime();
-							}
-							if (tmpTargetNode && tmpTargetNode.isParent && moveType == consts.move.TYPE_INNER) {
-								var startTimer = true;
-								if (window.zTreeMoveTimer && window.zTreeMoveTargetNodeTId !== tmpTargetNode.tId) {
-									clearTimeout(window.zTreeMoveTimer);
-									window.zTreeMoveTargetNodeTId = null;
-								}else if (window.zTreeMoveTimer && window.zTreeMoveTargetNodeTId === tmpTargetNode.tId) {
-									startTimer = false;
+							if (tmpTarget) {
+								tmpArrow.css({
+									"display":"block",
+									"top": dY + "px",
+									"left": (tmpLeft + dX) + "px"
+								});
+								tmpTargetA.addClass(consts.node.TMPTARGET_NODE + "_" + moveType);
+
+								if (preTmpTargetNodeId != tmpTargetNodeId || preTmpMoveType != moveType) {
+									startTime = (new Date()).getTime();
 								}
-								if (startTimer) {
-									window.zTreeMoveTimer = setTimeout(function() {
-										if (moveType != consts.move.TYPE_INNER) return;
-										if (tmpTargetNode && tmpTargetNode.isParent && !tmpTargetNode.open && (new Date()).getTime() - startTime > targetSetting.edit.drag.autoOpenTime
-											&& tools.apply(targetSetting.callback.beforeDragOpen, [targetSetting.treeId, tmpTargetNode], true)) {
-											view.switchNode(targetSetting, tmpTargetNode);
-											if (targetSetting.edit.drag.autoExpandTrigger) {
-												targetSetting.treeObj.trigger(consts.event.EXPAND, [targetSetting.treeId, tmpTargetNode]);
+								if (tmpTargetNode && tmpTargetNode.isParent && moveType == consts.move.TYPE_INNER) {
+									var startTimer = true;
+									if (window.zTreeMoveTimer && window.zTreeMoveTargetNodeTId !== tmpTargetNode.tId) {
+										clearTimeout(window.zTreeMoveTimer);
+										window.zTreeMoveTargetNodeTId = null;
+									} else if (window.zTreeMoveTimer && window.zTreeMoveTargetNodeTId === tmpTargetNode.tId) {
+										startTimer = false;
+									}
+									if (startTimer) {
+										window.zTreeMoveTimer = setTimeout(function() {
+											if (moveType != consts.move.TYPE_INNER) return;
+											if (tmpTargetNode && tmpTargetNode.isParent && !tmpTargetNode.open && (new Date()).getTime() - startTime > targetSetting.edit.drag.autoOpenTime
+												&& tools.apply(targetSetting.callback.beforeDragOpen, [targetSetting.treeId, tmpTargetNode], true)) {
+												view.switchNode(targetSetting, tmpTargetNode);
+												if (targetSetting.edit.drag.autoExpandTrigger) {
+													targetSetting.treeObj.trigger(consts.event.EXPAND, [targetSetting.treeId, tmpTargetNode]);
+												}
 											}
-										}
-									}, targetSetting.edit.drag.autoOpenTime+50);
-									window.zTreeMoveTargetNodeTId = tmpTargetNode.tId;
+										}, targetSetting.edit.drag.autoOpenTime+50);
+										window.zTreeMoveTargetNodeTId = tmpTargetNode.tId;
+									}
 								}
 							}
 						}
@@ -658,26 +668,16 @@
 								}
 							}
 							if (moveType == consts.move.TYPE_INNER) {
-								view.addNodes(targetSetting, dragTargetNode, newNodes);
+								view.addNodes(targetSetting, dragTargetNode, -1, newNodes);
 							} else {
-								view.addNodes(targetSetting, dragTargetNode.getParentNode(), newNodes);
-								if (moveType == consts.move.TYPE_PREV) {
-									for (i=0, l=newNodes.length; i<l; i++) {
-										view.moveNode(targetSetting, dragTargetNode, newNodes[i], moveType, false);
-									}
-								} else {
-									for (i=-1, l=newNodes.length-1; i<l; l--) {
-										view.moveNode(targetSetting, dragTargetNode, newNodes[l], moveType, false);
-									}
-								}
+								view.addNodes(targetSetting, dragTargetNode.getParentNode(), moveType == consts.move.TYPE_PREV ? dragTargetNode.getIndex() : dragTargetNode.getIndex()+1, newNodes);
 							}
 						} else {
 							if (isCopy && moveType == consts.move.TYPE_INNER) {
-								view.addNodes(targetSetting, dragTargetNode, newNodes);
+								view.addNodes(targetSetting, dragTargetNode, -1, newNodes);
+							} else if (isCopy) {
+								view.addNodes(targetSetting, dragTargetNode.getParentNode(), moveType == consts.move.TYPE_PREV ? dragTargetNode.getIndex() : dragTargetNode.getIndex()+1, newNodes);
 							} else {
-								if (isCopy) {
-									view.addNodes(targetSetting, dragTargetNode.getParentNode(), newNodes);
-								}
 								if (moveType != consts.move.TYPE_NEXT) {
 									for (i=0, l=newNodes.length; i<l; i++) {
 										view.moveNode(targetSetting, dragTargetNode, newNodes[i], moveType, false);
@@ -690,7 +690,9 @@
 							}
 						}
 						view.selectNodes(targetSetting, newNodes);
-						$$(newNodes[0], setting).focus().blur();
+
+						var a = $$(newNodes[0], setting).get(0);
+						view.scrollIntoView(a);
 
 						setting.treeObj.trigger(consts.event.DROP, [event, targetSetting.treeId, newNodes, dragTargetNode, moveType, isCopy]);
 					}
@@ -837,11 +839,9 @@
 				newName = forceName ? forceName:(isCancel ? node[nameKey]: inputObj.val());
 				if (tools.apply(setting.callback.beforeRename, [setting.treeId, node, newName, isCancel], true) === false) {
 					return false;
-				} else {
-					node[nameKey] = newName;
-					setting.treeObj.trigger(consts.event.RENAME, [setting.treeId, node, isCancel]);
 				}
-				var aObj = $$(node, consts.id.A, setting);
+                node[nameKey] = newName;
+                var aObj = $$(node, consts.id.A, setting);
 				aObj.removeClass(consts.node.CURSELECTED_EDIT);
 				inputObj.unbind();
 				view.setNodeName(setting, node);
@@ -849,6 +849,7 @@
 				root.curEditNode = null;
 				root.curEditInput = null;
 				view.selectNode(setting, node, false);
+                setting.treeObj.trigger(consts.event.RENAME, [setting.treeId, node, isCancel]);
 			}
 			root.noSelection = true;
 			return true;
@@ -947,7 +948,7 @@
 			}
 			var nodeDom = $$(node, setting);
 			if (!nodeDom.get(0)) {
-				nodeDom = view.appendNodes(setting, node.level, [node], null, false, true).join('');
+				nodeDom = view.appendNodes(setting, node.level, [node], null, -1, false, true).join('');
 			} else if (!targetObj.get(0)) {
 				nodeDom.remove();
 			}
@@ -1141,7 +1142,7 @@
 	}
 
 	var _createNodes = view.createNodes;
-	view.createNodes = function(setting, level, nodes, parentNode) {
+	view.createNodes = function(setting, level, nodes, parentNode, index) {
 		if (_createNodes) {
 			_createNodes.apply(view, arguments);
 		}
