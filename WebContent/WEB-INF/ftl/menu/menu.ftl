@@ -8,7 +8,8 @@
 		<link   rel="shortcut icon" href="http://img.wenyifan.net/images/favicon.ico" />
 		<link href="/js/common/bootstrap/3.3.5/css/bootstrap.min.css?${_v}" rel="stylesheet"/>
 		<link href="/css/common/base.css?${_v}" rel="stylesheet"/>
-		<link href="/js/jquery-ztree/css/zTreeStyle.css" rel="stylesheet" type="text/css" />
+		<!-- <link href="/js/jquery-ztree/css/zTreeStyle.css" rel="stylesheet" type="text/css" /> -->
+		<link href="/js/jquery-ztree/css/metroStyle/metroStyle.css" rel="stylesheet"  type="text/css">
 		
 		<script src="/js/jquery-3.2.1.min.js"></script>
     	<script src="/js/jquery-ztree/jquery.ztree.core-3.5.26.js" type="text/javascript"></script>
@@ -32,12 +33,13 @@
 					type: "post"
 				},
 				view: {
-					dblClickExpand: false,//禁用双击
-					showIcon:true
+					addHoverDom:ztreeAddHoverDom,//自定义添加图标
+					removeHoverDom: removeHoverDom,//自定义修改图标
+					dblClickExpand: false//禁用双击
 				},
 				edit:{
 					enable:true,
-					showRenameBtn:true
+					showRenameBtn:false//显示删除图标
 				},
 				callback:{
 					onClick: zTreeOnClick,
@@ -45,6 +47,31 @@
 					beforeRemove:ztreeBeforeRemove
 				}
 			};
+			
+			function ztreeAddHoverDom(treeId, treeNode){
+				 console.log("ztreeAddHoverDom:"+treeId+"-"+treeNode);
+				 var sObj = $("#" + treeNode.tId + "_span");
+	             if (treeNode.editNameFlag || $("#addBtn_"+treeNode.tId).length>0) 
+	            	 return;
+	             var addStr = "<span class='button add' id='addBtn_" + treeNode.tId
+	                + "' title='添加' onfocus='this.blur();'></span>";
+	             var editStr = "<span class='button edit' id='editBtn_"+treeNode.tId
+	             	+"' title='修改' onfocus='this.blur();'></span>";
+	             sObj.after(addStr);
+	             sObj.after(editStr);
+	             var btn = $("#addBtn_"+treeNode.tId);
+	             if (btn) btn.bind("click", function(){
+	                var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+	                zTree.addNodes(treeNode, {id:(100 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
+	                return false;
+	             });
+			};
+			
+			function removeHoverDom(treeId, treeNode) {
+	            $("#addBtn_"+treeNode.tId).unbind().remove();
+	            $("#editBtn_"+treeNode.tId).unbind().remove();
+	        };
+			
 			function ztreeBeforeRemove(reeId, treeNode){
 				var flag = false;
 				$.ajax({

@@ -1,6 +1,7 @@
 package com.sojson.menu.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.alibaba.fastjson.JSON;
 import com.sojson.common.controller.BaseController;
-import com.sojson.common.utils.BeanUtils;
 import com.sojson.common.utils.Constants;
 import com.sojson.common.utils.SpringRedisUtils;
 import com.sojson.common.ztree.MenuZTreeNode;
@@ -77,9 +77,12 @@ public class MenuController extends BaseController{
 				for(UMenuBo bean: menuList){
 					MenuZTreeNode menuNode = makeMenuTreeNode(bean, StringUtils.isEmpty(parentId));////首级节点，自动展开
 					menuNode.setOpenLevel(2);//自动展开前面2级
+					menuNode.compareTo(menuNode);
 					menuNodeList.add(menuNode);
 				}
+				Collections.sort(menuNodeList);
 			}
+			
 			String json = JSON.toJSONString(menuNodeList);
 			resultMap.put("status", 200);
 			resultMap.put("message", "查询成功");
