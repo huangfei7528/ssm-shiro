@@ -30,31 +30,40 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 	}
 
 	@Override
-	public int insert(UMenu record) {
-		return menuMapper.insert(record);
+	public int insert(UMenuBo record) {
+		UMenu u = new UMenu();
+		BeanUtils.copyNotNullProperties(record, u);
+		return menuMapper.insert(u);
 	}
 
 	@Override
-	public int insertSelective(UMenu record) {
-		return menuMapper.insertSelective(record);
+	public int insertSelective(UMenuBo record) {
+		UMenu u = new UMenu();
+		BeanUtils.copyNotNullProperties(record, u);
+		menuMapper.insertSelective(u);
+		return u.getId().intValue();
 	}
 
 	@Override
 	public UMenuBo selectByPrimaryKey(Long id) {
 		UMenuBo bo = new UMenuBo();
 		UMenu m = menuMapper.selectByPrimaryKey(id);
-		BeanUtils.copyNotNullProperties(bo, m);
+		BeanUtils.copyNotNullProperties(m, bo);
 		return bo;
 	}
 
 	@Override
-	public int updateByPrimaryKeySelective(UMenu record) {
-		return menuMapper.updateByPrimaryKeySelective(record);
+	public int updateByPrimaryKeySelective(UMenuBo record) {
+		UMenu u = new UMenu();
+		BeanUtils.copyNotNullProperties(record, u);
+		return menuMapper.updateByPrimaryKeySelective(u);
 	}
 
 	@Override
-	public int updateByPrimaryKey(UMenu record) {
-		return menuMapper.updateByPrimaryKey(record);
+	public int updateByPrimaryKey(UMenuBo record) {
+		UMenu u = new UMenu();
+		BeanUtils.copyNotNullProperties(record, u);
+		return menuMapper.updateByPrimaryKey(u);
 	}
 
 	@Override

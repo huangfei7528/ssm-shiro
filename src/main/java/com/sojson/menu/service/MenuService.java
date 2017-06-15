@@ -11,15 +11,15 @@ public interface MenuService {
 	
 	int deleteByPrimaryKey(Long id);
 
-    int insert(UMenu record);
+    int insert(UMenuBo record);
 
-    int insertSelective(UMenu record);
+    int insertSelective(UMenuBo record);
 
     UMenuBo selectByPrimaryKey(Long id);
 
-    int updateByPrimaryKeySelective(UMenu record);
+    int updateByPrimaryKeySelective(UMenuBo record);
 
-    int updateByPrimaryKey(UMenu record);
+    int updateByPrimaryKey(UMenuBo record);
     /**
      * 查询所有菜单
      * @return

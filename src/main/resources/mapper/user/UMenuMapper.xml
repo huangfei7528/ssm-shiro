@@ -56,7 +56,7 @@
     where id = #{id,jdbcType=BIGINT}
   </delete>
   
-  <insert id="insert" parameterType="com.sojson.common.model.UMenu" >
+  <insert id="insert" useGeneratedKeys="true" keyProperty="id" parameterType="com.sojson.common.model.UMenu" >
     insert into u_menus (id, pid, name, 
       url, logo_url, remark, 
       order_by, create_time, modife_time
@@ -67,7 +67,7 @@
       )
   </insert>
   
-  <insert id="insertSelective" parameterType="com.sojson.common.model.UMenu" >
+  <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id" parameterType="com.sojson.common.model.UMenu" >
     insert into u_menus
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >

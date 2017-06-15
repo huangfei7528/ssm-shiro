@@ -59,12 +59,37 @@
 	             	+"' title='修改' onfocus='this.blur();'></span>";
 	             sObj.after(addStr);
 	             sObj.after(editStr);
-	             var btn = $("#addBtn_"+treeNode.tId);
-	             if (btn) btn.bind("click", function(){
-	                var zTree = $.fn.zTree.getZTreeObj("treeDemo");
-	                zTree.addNodes(treeNode, {id:(100 + newCount), pId:treeNode.id, name:"new node" + (newCount++)});
-	                return false;
-	             });
+	             var add_btn = $("#addBtn_"+treeNode.tId);
+	             var edit_btn = $("#editBtn_"+treeNode.tId);
+	             if (add_btn){
+	            	 add_btn.bind("click", function(){
+		                $("#parentTreeId").val(treeNode.tId);
+		                $("#childParentId").val(treeNode.id);	
+		                $("#addmenu").modal();
+		              	 return false;
+	             	});
+	             }
+	             if(edit_btn){
+	            	 edit_btn.bind("click", function(){
+		                $("#parentTreeId").val(treeNode.tId);
+		                $("#childParentId").val(treeNode.id);	
+		                $("#editmenu").modal();
+		            	$.ajax({
+							 type: 'POST',
+							 url: '${basePath}/menu/targetEdit.shtml',
+							 data: {'id':treeNode.id},
+							 dataType:"json",
+					         success:function(data){
+					        	 if(data && data.status == 200){
+					        		 $("#editMenuForm").setForm($.parseJSON(data.node));
+					        	 }else{
+					        		 layer.alert(data.message);
+					        	 }
+					         }
+						});
+		              	 return false;
+	             	});
+	             }
 			};
 			
 			function removeHoverDom(treeId, treeNode) {
@@ -116,6 +141,18 @@
 				var node ;
 				node = init(node);
 				zTreeObj = $.fn.zTree.init($("#treeMenu"), setting, node);
+				$('#addmenu').on('hide.bs.modal', function (e) {
+					  // 执行一些动作...
+					$(e.currentTarget).find("input").each(function () { 
+						$(this).val(""); 
+					}); 
+				});
+				$('#editmenu').on('hide.bs.modal', function (e) {
+					  // 执行一些动作...
+					$(e.currentTarget).find("input").each(function () { 
+						$(this).val(""); 
+					}); 
+				});
 			});
 			
 			var init = function(node, parentId){
@@ -136,6 +173,59 @@
 			         }
 				});
 				return node
+			};
+			
+			function addMenu(){
+				var index = layer.load();
+				$.ajax({
+					 type: 'POST',
+					 url: '${basePath}/menu/addMenu.shtml',
+					 data: $("#boxMenuForm").serialize(),
+					 success:function(data){
+						 if(data && data.status == 200){
+			        		var treeId = $("#parentTreeId").val();
+			        		var ztreeObj = $.fn.zTree.getZTreeObj("treeMenu");
+			        		var node = ztreeObj.getNodeByTId(treeId);
+			        		var chileNode =$.parseJSON(data.node);
+			        		ztreeObj.addNodes(node, -1, chileNode, true);
+			        		$('#addmenu').modal('hide');
+			        		layer.msg(data.message);
+			        		layer.close(index)
+			        	 }else{
+			        		 layer.close(index);
+			        		 layer.alert(data.message);
+			        	 }
+					 }
+				});
+			};
+			
+			$.fn.setForm = function(jsonValue) {  
+			    var obj=this;  
+			    $.each(jsonValue, function (name, ival) { 
+			    	var $oinput ;
+			    	try{
+			    		$oinput = obj.find("input[name=" + name + "]");  
+			    	}catch(e){
+			    		return true
+			    	}
+			        if ($oinput.attr("type")== "radio" || $oinput.attr("type")== "checkbox"){  
+			             $oinput.each(function(){  
+			                 if(Object.prototype.toString.apply(ival) == '[object Array]'){//是复选框，并且是数组  
+			                      for(var i=0;i<ival.length;i++){  
+			                          if($(this).val()==ival[i])  
+			                             $(this).attr("checked", "checked");  
+			                      }  
+			                 }else{  
+			                     if($(this).val()==ival)  
+			                        $(this).attr("checked", "checked");  
+			                 }  
+			             });  
+			        }else if($oinput.attr("type")== "textarea"){//多行文本框  
+			            obj.find("[name="+name+"]").html(ival);  
+			        }else{  
+			             obj.find("[name="+name+"]").val(ival);   
+			        }  
+			   });  
 			};
 		</script>
 	</head>
@@ -178,7 +268,83 @@
 			  </div>
 			</div>
 			<#--/弹框-->
-			
+			<#--添加弹框-->
+			<div class="modal fade" id="addmenu" tabindex="-1" role="dialog" aria-labelledby="addmenuLabel">
+			  <div class="modal-dialog" menu="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="addroleLabel">添加菜单</h4>
+			      </div>
+			      <div class="modal-body">
+			        <form id="boxMenuForm">
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">菜单名称:</label>
+			            <input type="text" class="form-control" name="name" id="name" placeholder="请输入菜单名称"/>
+			            <input type="hidden" name="pid" id="childParentId" value=""/>
+			            <input type="hidden" name="id" value=""/>
+			            <input type="hidden" id="parentTreeId" value=""/>
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">菜单url:</label>
+			            <input type="text" class="form-control" id="type" name="url"  placeholder="请输入菜单url">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">排序:</label>
+			            <input type="text" class="form-control" id="orderBy" name="orderBy"  placeholder="请输入排序  [数字]">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">备注:</label>
+			            <input type="text" class="form-control" id="remark" name="remark"  placeholder="请输入备注">
+			          </div>
+			        </form>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" onclick="addMenu();" class="btn btn-primary">Save</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<#--/添加弹框-->
+			<#--修改弹框-->
+			<div class="modal fade" id="editmenu" tabindex="-1" role="dialog" aria-labelledby="editmenuLabel">
+			  <div class="modal-dialog" menu="document">
+			    <div class="modal-content">
+			      <div class="modal-header">
+			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+			        <h4 class="modal-title" id="addroleLabel">添加菜单</h4>
+			      </div>
+			      <div class="modal-body">
+			        <form id="editMenuForm">
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">菜单名称:</label>
+			            <input type="text" class="form-control" name="name" id="name" placeholder="请输入菜单名称"/>
+			            <input type="hidden" name="pid" id="childParentId" value=""/>
+			            <input type="hidden" id="parentTreeId" value=""/>
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">菜单url:</label>
+			            <input type="text" class="form-control" id="type" name="url"  placeholder="请输入菜单url">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">排序:</label>
+			            <input type="text" class="form-control" id="type" name="orderBy"  placeholder="请输入排序  [数字]">
+			          </div>
+			          <div class="form-group">
+			            <label for="recipient-name" class="control-label">备注:</label>
+			            <input type="text" class="form-control" id="type" name="remark"  placeholder="请输入备注">
+			          </div>
+			        </form>
+			      </div>
+			      <div class="modal-footer">
+			        <button type="button" onclick="addMenu();" class="btn btn-primary">Save</button>
+			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			      </div>
+			    </div>
+			  </div>
+			</div>
+			<#--/修改弹框-->
 		</div>
 			
 	</body>
