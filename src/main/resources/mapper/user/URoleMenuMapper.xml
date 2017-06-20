@@ -28,4 +28,17 @@
       </if>
     </trim>
   </insert>
+  
+  <delete id="deleteByRoleIdAndMenuId" parameterType="java.lang.Long" >
+    delete from u_role_menu
+    where r_id = #{roleId,jdbcType=BIGINT} and m_id = #{menuId,jdbcType=BIGINT} 
+  </delete>
+  
+  <select id="findMenuByRoleId" resultType="java.lang.Long" parameterType="java.lang.Long" >
+    select  m_id from u_role_menu
+    <if test="roleId != null" >
+	    where r_id  = #{roleId,jdbcType=BIGINT}
+   	</if>
+  </select>
+  
 </mapper>

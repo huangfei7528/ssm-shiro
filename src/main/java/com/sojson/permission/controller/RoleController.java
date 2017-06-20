@@ -1,7 +1,11 @@
 package com.sojson.permission.controller;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -12,10 +16,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.alibaba.fastjson.JSON;
 import com.sojson.common.controller.BaseController;
 import com.sojson.common.model.URole;
+import com.sojson.common.utils.BeanUtils;
+import com.sojson.common.utils.Constants;
 import com.sojson.common.utils.LoggerUtils;
+import com.sojson.common.utils.SpringRedisUtils;
+import com.sojson.common.ztree.MenuZTreeNode;
 import com.sojson.core.mybatis.page.Pagination;
+import com.sojson.menu.bo.UMenuBo;
+import com.sojson.menu.service.MenuService;
 import com.sojson.permission.service.RoleService;
 import com.sojson.user.manager.UserManager;
 /**
@@ -43,7 +54,48 @@ import com.sojson.user.manager.UserManager;
 @RequestMapping("role")
 public class RoleController extends BaseController {
 	@Autowired
-	RoleService roleService;
+	private RoleService roleService;
+	@Autowired
+	private MenuService menuService;
+	
+	@RequestMapping(value="tragetMTree")
+	public ModelAndView tragetMTree(Long roleId){
+		return new ModelAndView("role/tragetMtree","roleId",roleId);
+	}
+	
+	@ResponseBody
+	@RequestMapping(value="loadRoleMenu", method=RequestMethod.POST)
+	public Map<String, Object> loadRoleMenu(Long roleId,Long parentId){
+		try {
+			//取出全部菜单信息
+			Map<Long, UMenuBo> menuMap = SpringRedisUtils.getMap(Constants.ALL_MENU, Long.class, UMenuBo.class);
+			Set<Long> roleMenuList = menuService.findMenuByRoleId(roleId);
+			
+			List<MenuZTreeNode> menuNodeList = new ArrayList<MenuZTreeNode>();
+			for(Object key: menuMap.keySet()){
+				Long menuId = Long.valueOf(key.toString());
+				if(menuId.equals(Constants.TREE_ROOT_ID)){//跳过虚拟节点
+					continue;
+				}
+				MenuZTreeNode menuNode = makeMenuTreeNode(menuMap.get(key), true);
+				if(roleMenuList != null && roleMenuList.contains(menuId)){
+					menuNode.setChecked(true);//选中已经赋予的菜单
+				}
+				menuNodeList.add(menuNode);
+				Collections.sort(menuNodeList);
+			}
+			resultMap.put("status", 200);
+			resultMap.put("message", "加载角色菜单成功");
+			resultMap.put("treeList", JSON.toJSONString(menuNodeList));
+		} catch (Exception e) {
+			e.printStackTrace();
+			logger.error(e);
+			resultMap.put("status", 500);
+			resultMap.put("message", "加载角色菜单失败");
+		}
+		return resultMap;
+	}
+	
 	/**
 	 * 角色列表
 	 * @return
@@ -103,5 +155,32 @@ public class RoleController extends BaseController {
 		//把查询出来的roles 转换成bootstarp 的 tree数据
 		List<Map<String, Object>> data = UserManager.toTreeData(roles);
 		return data;
+	}
+	
+	/**
+	 * 构造前台展示树的数据格式
+	 * @param bean原始数据格式
+	 * @param open是否需要展开
+	 * @return
+	 * @throws IllegalAccessException 
+	 * @throws InstantiationException 
+	 */
+	private MenuZTreeNode makeMenuTreeNode(UMenuBo bean, boolean open) {
+		MenuZTreeNode node = new MenuZTreeNode();
+		node.setId(bean.getId());
+		node.setPId(bean.getParentMenuBo().getId());
+		node.setName(bean.getName());
+		node.setOpen(open);
+		node.setUrl(bean.getUrl());
+		node.setOrderBy(bean.getOrderBy());
+		node.setLogoUrl(bean.getLogoUrl());
+		
+		UMenuBo menu = (UMenuBo) SpringRedisUtils.getHashKey(Constants.ALL_MENU, bean.getId()+"");
+		if(menu.getChildrenList() != null && !menu.getChildrenList().isEmpty()){//是否有孩子节点
+			node.setIsParent(true);
+		}else{
+			node.setIsParent(false);
+		}
+		return node;
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.sojson.common.dao.user.UMenuMapper;
 import com.sojson.common.dao.user.URoleMapper;
+import com.sojson.common.dao.user.URoleMenuMapper;
 import com.sojson.common.model.UMenu;
 import com.sojson.common.utils.BeanUtils;
 import com.sojson.common.utils.Constants;
@@ -23,6 +24,8 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 
 	@Autowired
 	private UMenuMapper menuMapper;
+	@Autowired
+	private URoleMenuMapper roleMenuMapper;
 	
 	@Override
 	public int deleteByPrimaryKey(Long id) {
@@ -121,8 +124,12 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 	}
 
 	@Override
-	public List<Long> findMenuIdByRole(Long roleId) {
-		return menuMapper.findMenuIdByRole(roleId);
+	public Set<Long> findMenuByRoleId(Long roleId) {
+		Set<Long> menuSet = new HashSet<Long>();
+		if(roleId != null){
+			menuSet = roleMenuMapper.findMenuByRoleId(roleId);
+		}
+		return menuSet;
 	}
 
 }

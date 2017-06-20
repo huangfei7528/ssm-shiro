@@ -3,8 +3,6 @@ package com.sojson.common.dao.user;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.ibatis.annotations.Param;
-
 import com.sojson.common.model.UMenu;
 
 public interface UMenuMapper {
@@ -23,7 +21,7 @@ public interface UMenuMapper {
 	 * 查询所有子级菜单 (根据父级ID)
 	 * @return
 	 */
-    Set<UMenu> findMenuByParentId(@Param(value="pid")Long pid);
+    Set<UMenu> findMenuByParentId(Long pid);
     
     /**
 	 * 根据角色查询所有的菜单

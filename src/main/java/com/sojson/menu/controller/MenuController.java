@@ -192,7 +192,7 @@ public class MenuController extends BaseController{
 			throws InstantiationException, IllegalAccessException{
 		MenuZTreeNode node = new MenuZTreeNode();
 		node.setId(bean.getId());
-		node.setpId(String.valueOf(bean.getParentMenuBo().getId()));
+		node.setPId(bean.getParentMenuBo().getId());
 		node.setName(bean.getName());
 		node.setOpen(open);
 		node.setUrl(bean.getUrl());

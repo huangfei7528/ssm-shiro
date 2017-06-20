@@ -31,13 +31,6 @@
 				});
 				</@shiro.hasPermission>
 			});
-		
-		$(document).ready(function(){
-			$("#selectRoleMenu").bind("click",function(){
-				$("#roleTree").modal();
-			});
-		});
-		
 			<@shiro.hasPermission name="/role/clearRoleByUserIds.shtml">
 			<#--根据ID数组清空用户的角色-->
 			function deleteById(ids){
@@ -160,7 +153,6 @@
 										<@shiro.hasPermission name="/role/addRole2User.shtml">
 											<i class="glyphicon glyphicon-share-alt"></i><a href="javascript:selectRoleById(${it.id});">选择角色</a>
 										</@shiro.hasPermission>
-										<i class="glyphicon glyphicon-share-alt"></i><a href="javascript:" name="selectRoleMenu">角色菜单</a>
 									</td>
 								</tr>
 							</#list>
@@ -200,29 +192,6 @@
 			  </div>
 			</div>
 			<#--/弹框-->
-			<#--角色菜单弹框-->
-			<div class="modal fade" id="roleTree" tabindex="-1" role="dialog" aria-labelledby="roleTreeLabel">
-			  <div class="modal-dialog" menu="document">
-			    <div class="modal-content">
-			      <div class="modal-header">
-			        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-			        <h4 class="modal-title" id="roleTreeLabel">角色菜单</h4>
-			      </div>
-			      <div class="modal-body">
-			        <!-- 树 -->
-					<div class="span3" style="float: left; overflow-y: scroll; overflow-x: auto;">
-						<ul id="treeMenu" class="ztree"></ul>
-						<input type = "hidden" name = "parentId" id = "parentId" value = ""/>
-					</div>
-			      </div>
-			      <div class="modal-footer">
-			        <button type="button" onclick="addMenu();" class="btn btn-primary">Save</button>
-			        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-			      </div>
-			    </div>
-			  </div>
-			</div>
-			<#--/修改弹框-->
 		</div>
 			
 	</body>

@@ -8,7 +8,7 @@ package com.sojson.common.ztree;
 public class ZTreeNode {
 		
 	private Long id;//当前节点ID
-	private String pId;//父节点ID
+	private Long pId;//父节点ID
 	private String name;//节点名称
 	private boolean open;//是否展开
 	private Boolean isParent;//当前节点是否是父级节点（即是否有孩子节点）
@@ -24,16 +24,6 @@ public class ZTreeNode {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public ZTreeNode(Long id, String pId, String name, boolean open,
-			boolean isParent) {
-		super();
-		this.id = id;
-		this.pId = pId;
-		this.name = name;
-		this.open = open;
-		this.isParent = isParent;
-	}
-	
 	public Long getId() {
 		return id;
 	}
@@ -42,11 +32,11 @@ public class ZTreeNode {
 		this.id = id;
 	}
 
-	public String getpId() {
+	public Long getPId() {
 		return pId;
 	}
 
-	public void setpId(String pId) {
+	public void setPId(Long pId) {
 		this.pId = pId;
 	}
 

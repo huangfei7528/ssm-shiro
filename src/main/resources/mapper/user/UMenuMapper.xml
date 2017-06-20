@@ -29,7 +29,7 @@
      <include refid="Base_Column_List" />
     from u_menus
   	<if test="pid != null" >
-	    where pid  = #{pid}
+	    where pid  = #{pid,jdbcType=BIGINT}
    	</if>
   </select>
   

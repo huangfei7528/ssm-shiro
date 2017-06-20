@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.sojson.common.model.UMenu;
 import com.sojson.menu.bo.UMenuBo;
 
 public interface MenuService {
@@ -31,13 +30,7 @@ public interface MenuService {
 	 */
     Set<UMenuBo> findMenuByParentId(Long parentId);
     
-    /**
-	 * 根据角色查询所有的菜单
-	 * @param roleId
-	 * @return
-	 */
-	List<Long> findMenuIdByRole(Long roleId);
-	
-	
+	//查询角色所拥有菜单
+	Set<Long> findMenuByRoleId(Long roleId);
     
 }
