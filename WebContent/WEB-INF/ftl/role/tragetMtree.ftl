@@ -17,6 +17,9 @@
 		<div class="span3" style="float: left; overflow-y: scroll; overflow-x: auto;">
 			<ul id="roleTreeMenu" class="ztree"></ul>
 		</div>
+		<div class="span3">
+			<a class="btn btn-success" id = "saveRoleMenu" href = "javascript:">保存</a>
+		</div>
 	</body>
 		<script src="${basePath}/js/jquery-3.2.1.min.js"></script>
 		<script  src="${basePath}/js/common/layer/layer.js"></script>
@@ -24,28 +27,24 @@
 		<script  src="${basePath}/js/shiro.demo.js"></script>
 		
     	<script src="${basePath}/js/jquery-ztree/jquery.ztree.core-3.5.26.js" type="text/javascript"></script>
+		<script src="${basePath}/js/jquery-ztree/jquery.ztree.excheck-3.5.26.js"></script>
    		<script src="${basePath}/js/jquery-ztree/jquery.ztree.exedit-3.5.26.js" type="text/javascript"></script>
 		<script >
 		
 			var setting = {
-				async: {
+				/* async: {
 					enable: true,
 					url: '${basePath}/role/loadRoleMenu.shtml', 
 					autoParam: ['id=parentId'],
 					otherParam: null,
 					dataType: "json",
 					type: "post"
-				},
-				view: {
-					dblClickExpand: false//禁用双击
-				},
-				/* edit:{
-					enable:true,
-					showRenameBtn:false//显示删除图标
 				}, */
+				view: {
+					selectedMulti: false
+				},
 				check:{
 					enable:true,
-					chkStyle:"checkbox"
 				},
 				data:{
 					simpleData:{
@@ -73,6 +72,38 @@
 			        	 }
 			         }
 				});
+				$('#saveRoleMenu').bind('click',selectRoleNode);
 			});
+			
+			function selectRoleNode(){
+				var treeObj = $.fn.zTree.getZTreeObj("roleTreeMenu");
+				var nodes = treeObj.getCheckedNodes();
+				var addMenus = new Array();
+				var deleteMenus = new Array();
+				$.each(nodes, function(index, element){
+					if(element.checked){
+						addMenus.push(element.id);
+					}else{
+						deleteMenus.push(element.id);
+					}
+				});
+				$.ajax({
+					 type: 'POST',
+					 url: '${basePath}/role/editRoleMenu.shtml',
+					 data: {
+						 		'roleId':$("#roleId").val(),
+						 		'addMenus':addMenus.toString()
+						 	},
+					 dataType:"json",
+					 success:function(data){
+			        	 if(data && data.status == 200){
+			        		 layer.msg(data.message);
+			        		 parent.layer.close(parent.layer.getFrameIndex(window.name));//关闭当前layer窗口
+			        	 }else{
+			        		 layer.alert(data.message);
+			        	 }
+			         }
+				});
+			}
 		</script>
 </html>

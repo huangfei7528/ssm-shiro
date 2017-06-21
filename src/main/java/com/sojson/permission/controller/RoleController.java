@@ -26,6 +26,7 @@ import com.sojson.common.utils.SpringRedisUtils;
 import com.sojson.common.ztree.MenuZTreeNode;
 import com.sojson.core.mybatis.page.Pagination;
 import com.sojson.menu.bo.UMenuBo;
+import com.sojson.menu.bo.URoleMenuBo;
 import com.sojson.menu.service.MenuService;
 import com.sojson.permission.service.RoleService;
 import com.sojson.user.manager.UserManager;
@@ -57,6 +58,22 @@ public class RoleController extends BaseController {
 	private RoleService roleService;
 	@Autowired
 	private MenuService menuService;
+	
+	@ResponseBody
+	@RequestMapping(value="editRoleMenu", method=RequestMethod.POST)
+	public Map<String, Object> editRoleMenu(URoleMenuBo roleMenu){
+		try{
+			menuService.updateByRoleAndMenu(roleMenu.getRoleId(), roleMenu.getAddMenus());
+			resultMap.put("status", 200);
+			resultMap.put("message", "修改成功");
+		}catch(Exception e){
+			e.printStackTrace();
+			logger.error(e);
+			resultMap.put("status", 500);
+			resultMap.put("message", "修改角色菜单失败");
+		}
+		return resultMap;
+	}
 	
 	@RequestMapping(value="tragetMTree")
 	public ModelAndView tragetMTree(Long roleId){

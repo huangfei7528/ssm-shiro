@@ -11,7 +11,7 @@ public interface URoleMenuMapper {
 
     int insertSelective(URoleMenu record);
     
-    int deleteByRoleIdAndMenuId(Long roleId, Long menuId);
+    int deleteByRoleIdAndMenuId(@Param(value="roleId")Long roleId, @Param(value="menuId") Long menuId);
     
     Set<Long> findMenuByRoleId(@Param(value="roleId")Long roleId);
 }

@@ -32,5 +32,12 @@ public interface MenuService {
     
 	//查询角色所拥有菜单
 	Set<Long> findMenuByRoleId(Long roleId);
+	/**
+	 * 修改角色菜单关联信息
+	 * @param roleId 角色id
+	 * @param addMenus 菜单list
+	 * @return
+	 */
+	Boolean updateByRoleAndMenu(Long roleId,List<Long> addMenus);
     
 }

@@ -13,10 +13,12 @@ import com.sojson.common.dao.user.UMenuMapper;
 import com.sojson.common.dao.user.URoleMapper;
 import com.sojson.common.dao.user.URoleMenuMapper;
 import com.sojson.common.model.UMenu;
+import com.sojson.common.model.URoleMenu;
 import com.sojson.common.utils.BeanUtils;
 import com.sojson.common.utils.Constants;
 import com.sojson.core.mybatis.BaseMybatisDao;
 import com.sojson.menu.bo.UMenuBo;
+import com.sojson.menu.bo.URoleMenuBo;
 import com.sojson.menu.service.MenuService;
 
 @Service
@@ -130,6 +132,52 @@ public class MenuServiceImpl extends BaseMybatisDao<URoleMapper> implements Menu
 			menuSet = roleMenuMapper.findMenuByRoleId(roleId);
 		}
 		return menuSet;
+	}
+
+	@Override
+	public Boolean updateByRoleAndMenu(Long roleId, List<Long> addMenus) {
+		//现有的菜单信息
+		Set<Long> menuSet = this.findMenuByRoleId(roleId);
+		if(addMenus == null || addMenus.size()<=0){
+			return true;
+		}
+		//需要添加的的菜单
+		Set<Long> addMenuSet = new HashSet<Long>();
+		//数据库已有的菜单 不需要在删除
+		Set<Long> hasMenuSet = new HashSet<Long>();
+		//若查询数据库中菜单信息为存在 则添加的全为需要添加的菜单信息
+		if(menuSet == null || menuSet.size() <= 0){
+			addMenuSet.addAll(addMenus);
+		}else{
+			for(Long menuId : addMenus){
+				//若已有此菜单 则添加至数据库已有菜单hasMenuSet集合 若无此菜单 则添加至需要添加的菜单addMenuSet集合
+				if(menuSet.contains(menuId)){
+					hasMenuSet.add(menuId);
+				}else{
+					addMenuSet.add(menuId);
+				}
+			}
+			//删除menuSet中在addMenus已含有的菜单 剩下的则为需要删除的菜单
+			menuSet.removeAll(hasMenuSet);
+			//移除addMenus新增菜单中已有的hasMenuSet菜单信息
+			addMenus.removeAll(hasMenuSet);
+		}
+		//删除菜单
+		if(menuSet != null && menuSet.size() > 0){
+			for(Long menuId : menuSet){
+				roleMenuMapper.deleteByRoleIdAndMenuId(roleId, menuId);
+			}
+		}
+		//添加新增的菜单
+		if(addMenus != null && addMenus.size() > 0){
+			for(Long menuId : addMenus){
+				URoleMenu rm = new URoleMenu();
+				rm.setmId(menuId);
+				rm.setrId(roleId);
+				roleMenuMapper.insert(rm);
+			}
+		}
+		return true;
 	}
 
 }
